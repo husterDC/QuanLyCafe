@@ -1,7 +1,9 @@
-﻿using System;
+﻿using QuanLyCafe.DAO;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -15,31 +17,22 @@ namespace QuanLyCafe
         public fAdmin()
         {
             InitializeComponent();
+            LoadAccountList();
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        void LoadFoodList()
         {
+            string query = "select * from food";
 
+            dataGridViewFood.DataSource = DataProvider.Instance.ExecuteQuery(query);
         }
 
-        private void tcAdmin_SelectedIndexChanged(object sender, EventArgs e)
+        void LoadAccountList()
         {
 
-        }
+            string query = "EXEC dbo.USP_GetListAccountByUserName @userName";
 
-        private void panel6_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void panel4_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void label11_Click(object sender, EventArgs e)
-        {
-
+            dataGridViewAdmin.DataSource = DataProvider.Instance.ExecuteQuery(query, new object[] { "K9" });
         }
     }
 }
