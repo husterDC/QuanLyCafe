@@ -19,12 +19,11 @@ namespace QuanLyCafe.DAO
 
         public bool Login(string userName, string passWord)
         {
-            string query = "SELECT * FROM dbo.Account WHERE userName = N'" + userName + "' AND passWord = N'" + passWord + "' ";
+            string query = "USP_Login @userName , @passWord";
 
-            DataTable ans = DataProvider.Instance.ExecuteQuery(query);
+            DataTable result = DataProvider.Instance.ExecuteQuery(query, new object[] { userName, passWord });
 
-            return ans.Rows.Count > 0;
-            
+            return result.Rows.Count > 0;
         }
     }
 }
