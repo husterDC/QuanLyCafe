@@ -20,6 +20,8 @@ namespace QuanLyCafe
         {
             InitializeComponent();
             LoadTable();
+            LoadCaterogy();
+            
         }
         #region Method
         void LoadTable()
@@ -47,6 +49,21 @@ namespace QuanLyCafe
             }
         }
 
+        void LoadCaterogy()
+        {
+            List<FoodCaterogy> listCaterogy = FoodCaterogyDAO.Instance.GetListFoodCaterogy();
+            
+            cbCaterogy.DataSource = listCaterogy;
+            cbCaterogy.DisplayMember = "Name";
+        }
+
+        void LoadFoodListByCaterogyID(int id)
+        {
+            List<Food> listFood = FoodDAO.Instance.GetFoodByCaterogyId(id);
+            cbFood.DataSource = listFood;
+            cbFood.DisplayMember = "Name";
+        }
+
         void ShowBill(int id)
         {
             listwBill.Items.Clear();
@@ -61,7 +78,7 @@ namespace QuanLyCafe
                 totalPrice += item.TotalPrice;
                 listwBill.Items.Add(listViewItem);
             }
-            CultureInfo culture = new CultureInfo("vi - VN");
+            CultureInfo culture = new CultureInfo("vi-VN");
             //Thread.CurrentThread.CurrentCulture = culture;
             textTotalPrice.Text = totalPrice.ToString("c", culture);
         }
@@ -96,6 +113,20 @@ namespace QuanLyCafe
             fAdmin f = new fAdmin();
             f.ShowDialog();
         }
+
+        private void cbFood_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int id = 0;
+            ComboBox cb = sender as ComboBox;
+            if (cb.SelectedItem == null)
+                return;
+
+            FoodCaterogy selected = cb.SelectedItem as FoodCaterogy;
+            id = selected.Id;
+            LoadFoodListByCaterogyID(id);
+        }
         #endregion
+
+
     }
 }

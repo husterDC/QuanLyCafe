@@ -50,10 +50,14 @@
     <Compile Include="DAO\BillDAO.cs" />
     <Compile Include="DAO\BillInforDAO.cs" />
     <Compile Include="DAO\DataProvider.cs" />
+    <Compile Include="DAO\FoodCaterogyDAO.cs" />
+    <Compile Include="DAO\FoodDAO.cs" />
     <Compile Include="DAO\MenuDAO.cs" />
     <Compile Include="DAO\TableDAO.cs" />
     <Compile Include="DTO\Bill.cs" />
     <Compile Include="DTO\BillInfor.cs" />
+    <Compile Include="DTO\Food.cs" />
+    <Compile Include="DTO\FoodCaterogy.cs" />
     <Compile Include="DTO\MenuDTO.cs" />
     <Compile Include="DTO\Table.cs" />
     <Compile Include="fAccountProfile.cs">

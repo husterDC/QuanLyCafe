@@ -107,6 +107,7 @@
             this.texbPassword.Name = "texbPassword";
             this.texbPassword.Size = new System.Drawing.Size(348, 22);
             this.texbPassword.TabIndex = 2;
+            this.texbPassword.Text = "1";
             this.texbPassword.UseSystemPasswordChar = true;
             // 
             // labelPassword
@@ -138,6 +139,7 @@
             this.texbUserName.Name = "texbUserName";
             this.texbUserName.Size = new System.Drawing.Size(348, 22);
             this.texbUserName.TabIndex = 2;
+            this.texbUserName.Text = "K9";
             // 
             // labelUserName
             // 
