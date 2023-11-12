@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnSeePassWord = new System.Windows.Forms.Button();
             this.btnExit = new System.Windows.Forms.Button();
             this.btnLogin = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -37,7 +38,6 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.texbUserName = new System.Windows.Forms.TextBox();
             this.labelUserName = new System.Windows.Forms.Label();
-            this.btnSeePassWord = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -51,15 +51,27 @@
             this.panel1.Controls.Add(this.panel3);
             this.panel1.Controls.Add(this.panel2);
             this.panel1.Location = new System.Drawing.Point(16, 15);
-            this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(549, 244);
             this.panel1.TabIndex = 0;
             // 
+            // btnSeePassWord
+            // 
+            this.btnSeePassWord.Location = new System.Drawing.Point(192, 98);
+            this.btnSeePassWord.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSeePassWord.Name = "btnSeePassWord";
+            this.btnSeePassWord.Size = new System.Drawing.Size(100, 28);
+            this.btnSeePassWord.TabIndex = 4;
+            this.btnSeePassWord.Text = "Hiện mật khẩu";
+            this.btnSeePassWord.UseVisualStyleBackColor = true;
+            this.btnSeePassWord.Click += new System.EventHandler(this.btnSeePassWord_Click);
+            // 
             // btnExit
             // 
+            this.btnExit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnExit.Location = new System.Drawing.Point(445, 98);
-            this.btnExit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnExit.Margin = new System.Windows.Forms.Padding(4);
             this.btnExit.Name = "btnExit";
             this.btnExit.Size = new System.Drawing.Size(100, 28);
             this.btnExit.TabIndex = 3;
@@ -70,7 +82,7 @@
             // btnLogin
             // 
             this.btnLogin.Location = new System.Drawing.Point(320, 98);
-            this.btnLogin.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnLogin.Margin = new System.Windows.Forms.Padding(4);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(100, 28);
             this.btnLogin.TabIndex = 2;
@@ -83,7 +95,7 @@
             this.panel3.Controls.Add(this.texbPassword);
             this.panel3.Controls.Add(this.labelPassword);
             this.panel3.Location = new System.Drawing.Point(4, 55);
-            this.panel3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel3.Margin = new System.Windows.Forms.Padding(4);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(541, 36);
             this.panel3.TabIndex = 1;
@@ -91,7 +103,7 @@
             // texbPassword
             // 
             this.texbPassword.Location = new System.Drawing.Point(188, 7);
-            this.texbPassword.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.texbPassword.Margin = new System.Windows.Forms.Padding(4);
             this.texbPassword.Name = "texbPassword";
             this.texbPassword.Size = new System.Drawing.Size(348, 22);
             this.texbPassword.TabIndex = 2;
@@ -114,7 +126,7 @@
             this.panel2.Controls.Add(this.texbUserName);
             this.panel2.Controls.Add(this.labelUserName);
             this.panel2.Location = new System.Drawing.Point(4, 4);
-            this.panel2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel2.Margin = new System.Windows.Forms.Padding(4);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(541, 36);
             this.panel2.TabIndex = 0;
@@ -122,7 +134,7 @@
             // texbUserName
             // 
             this.texbUserName.Location = new System.Drawing.Point(188, 7);
-            this.texbUserName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.texbUserName.Margin = new System.Windows.Forms.Padding(4);
             this.texbUserName.Name = "texbUserName";
             this.texbUserName.Size = new System.Drawing.Size(348, 22);
             this.texbUserName.TabIndex = 2;
@@ -138,24 +150,15 @@
             this.labelUserName.TabIndex = 1;
             this.labelUserName.Text = "Tên Đăng Nhập:";
             // 
-            // btnSeePassWord
-            // 
-            this.btnSeePassWord.Location = new System.Drawing.Point(192, 98);
-            this.btnSeePassWord.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSeePassWord.Name = "btnSeePassWord";
-            this.btnSeePassWord.Size = new System.Drawing.Size(100, 28);
-            this.btnSeePassWord.TabIndex = 4;
-            this.btnSeePassWord.Text = "Hiện mật khẩu";
-            this.btnSeePassWord.UseVisualStyleBackColor = true;
-            this.btnSeePassWord.Click += new System.EventHandler(this.btnSeePassWord_Click);
-            // 
             // fLogin
             // 
+            this.AcceptButton = this.btnLogin;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnExit;
             this.ClientSize = new System.Drawing.Size(588, 281);
             this.Controls.Add(this.panel1);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "fLogin";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Đăng nhập";

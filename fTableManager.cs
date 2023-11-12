@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -27,6 +29,8 @@ namespace QuanLyCafe
             {
                 Button btn = new Button() { Width = TableDAO.TableWidth, Height = TableDAO.TableHeight };
                 btn.Text = table.Name + Environment.NewLine + table.Status;
+                btn.Click += Btn_Click;
+                btn.Tag = table;
 
                 switch (table.Status) {
 
@@ -42,9 +46,35 @@ namespace QuanLyCafe
 
             }
         }
+
+        void ShowBill(int id)
+        {
+            listwBill.Items.Clear();
+            List<MenuDTO> listBillInfor = MenuDAO.Instance.GetListMenuByTable(id);
+            float totalPrice = 0;
+            foreach (MenuDTO item in listBillInfor)
+            {
+                ListViewItem listViewItem = new ListViewItem(item.FoodName.ToString());
+                listViewItem.SubItems.Add(item.Count.ToString());
+                listViewItem.SubItems.Add(item.Price.ToString());
+                listViewItem.SubItems.Add(item.TotalPrice.ToString());
+                totalPrice += item.TotalPrice;
+                listwBill.Items.Add(listViewItem);
+            }
+            CultureInfo culture = new CultureInfo("vi - VN");
+            //Thread.CurrentThread.CurrentCulture = culture;
+            textTotalPrice.Text = totalPrice.ToString("c", culture);
+        }
+
         #endregion
 
         #region Events
+
+        private void Btn_Click(object sender, EventArgs e)
+        {
+            int tableID = ((sender as Button).Tag as Table).Id;
+            ShowBill(tableID);
+        }
         private void fTableManager_Load(object sender, EventArgs e)
         {
 
