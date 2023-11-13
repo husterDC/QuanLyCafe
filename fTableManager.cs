@@ -151,20 +151,33 @@ namespace QuanLyCafe
         {
             Table table = listwBill.Tag as Table;
             int idBill = BillDAO.Instance.GetUncheckBillIDByTableID(table.Id);
-
+            int discount = (int)nUDDiscount.Value;
+            double totalPrice = Convert.ToDouble(textTotalPrice.Text.Split(',')[0]);
+            double finalPrice = totalPrice - (totalPrice / 100) * discount;
             if (idBill != -1)
             {
-                if (MessageBox.Show("Bạn có muốn thanh toán hóa đơn cho bàn " + table.Name, "Thông báo", MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK)
+                if (MessageBox.Show(string.Format("Bạn có muốn thanh toán hóa đơn cho bàn {0} \n Tổng tiền - (Tổng tiền/100)x Giảm giá = {1} -{1}/100*{2} = {3}" ,table.Name, totalPrice, discount, finalPrice), "Thông báo", MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK)
                 {
-                    BillDAO.Instance.CheckOut(idBill);
+                    BillDAO.Instance.CheckOut(idBill, discount);
                     ShowBill(table.Id);
                 }
             }
             LoadTable();
         }
 
+
         #endregion
 
-        
+        private void btnDiscount_Click(object sender, EventArgs e)
+        {
+            /*
+            int discount = (int)nUDDiscount.Value;
+            double totalPrice = Convert.ToDouble(textTotalPrice.Text.Split(',')[0]);
+            double finalPrice = totalPrice - (totalPrice / 100) * discount;
+            CultureInfo culture = new CultureInfo("vi-VN");
+            //Thread.CurrentThread.CurrentCulture = culture;
+            textTotalPrice.Text = finalPrice.ToString("c", culture);
+            */
+        }
     }
 }

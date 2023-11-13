@@ -51,9 +51,9 @@ namespace QuanLyCafe.DAO
             }
         }
 
-        public void CheckOut(int id)
+        public void CheckOut(int id, int discount)
         {
-            string query = "UPDATE dbo.Bill SET status = 1 WHERE id = " + id;
+            string query = "UPDATE dbo.Bill SET dateCheckOut = GETDATE(), status = 1, " + "discount = " + discount + " WHERE id = " + id;
             DataProvider.Instance.ExecuteNonQuery(query);
         }
     }
