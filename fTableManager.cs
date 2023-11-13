@@ -26,6 +26,7 @@ namespace QuanLyCafe
         #region Method
         void LoadTable()
         {
+            flpanelTable.Controls.Clear();
             List<Table> tablelist = TableDAO.Instance.LoadTableList();
             foreach (Table table in tablelist)
             {
@@ -66,6 +67,7 @@ namespace QuanLyCafe
 
         void ShowBill(int id)
         {
+           
             listwBill.Items.Clear();
             List<MenuDTO> listBillInfor = MenuDAO.Instance.GetListMenuByTable(id);
             float totalPrice = 0;
@@ -81,6 +83,7 @@ namespace QuanLyCafe
             CultureInfo culture = new CultureInfo("vi-VN");
             //Thread.CurrentThread.CurrentCulture = culture;
             textTotalPrice.Text = totalPrice.ToString("c", culture);
+            
         }
 
         #endregion
@@ -90,6 +93,7 @@ namespace QuanLyCafe
         private void Btn_Click(object sender, EventArgs e)
         {
             int tableID = ((sender as Button).Tag as Table).Id;
+            listwBill.Tag = (sender as Button).Tag;
             ShowBill(tableID);
         }
         private void fTableManager_Load(object sender, EventArgs e)
@@ -97,10 +101,7 @@ namespace QuanLyCafe
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-        }
+        
 
         private void thôngTinCáNhânToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -125,8 +126,45 @@ namespace QuanLyCafe
             id = selected.Id;
             LoadFoodListByCaterogyID(id);
         }
+
+        private void btnAddFood_Click(object sender, EventArgs e)
+        {
+            Table table = listwBill.Tag as Table;
+            int idBill = BillDAO.Instance.GetUncheckBillIDByTableID(table.Id);
+            int FoodId = (cbFood.SelectedItem as Food).Id;
+            int count = (int)nUDFood.Value;
+            if (idBill == -1)
+            {
+                BillDAO.Instance.InsertBill(table.Id);
+                BillInforDAO.Instance.InsertBillInfo(BillDAO.Instance.GetMaxIdBill(), FoodId, count);
+            }
+            else
+            {
+                BillInforDAO.Instance.InsertBillInfo(idBill, FoodId, count);
+            }
+
+            ShowBill(table.Id);
+            LoadTable();
+        }
+
+        private void btnPay_Click(object sender, EventArgs e)
+        {
+            Table table = listwBill.Tag as Table;
+            int idBill = BillDAO.Instance.GetUncheckBillIDByTableID(table.Id);
+
+            if (idBill != -1)
+            {
+                if (MessageBox.Show("Bạn có muốn thanh toán hóa đơn cho bàn " + table.Name, "Thông báo", MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK)
+                {
+                    BillDAO.Instance.CheckOut(idBill);
+                    ShowBill(table.Id);
+                }
+            }
+            LoadTable();
+        }
+
         #endregion
 
-
+        
     }
 }

@@ -143,3 +143,220 @@ AS SELECT * FROM dbo.TableFood
 GO
 
 
+--thêm category
+INSERT dbo.FoodCategory
+        ( name )
+VALUES  ( N'Hải sản'  -- name - nvarchar(100)
+          )
+INSERT dbo.FoodCategory
+        ( name )
+VALUES  ( N'Nông sản' )
+INSERT dbo.FoodCategory
+        ( name )
+VALUES  ( N'Lâm sản' )
+INSERT dbo.FoodCategory
+        ( name )
+VALUES  ( N'Sản sản' )
+INSERT dbo.FoodCategory
+        ( name )
+VALUES  ( N'Nước' )
+
+SELECT * FROM dbo.FoodCategory
+-- thêm món ăn
+INSERT dbo.Food
+        ( name, idCategory, price )
+VALUES  ( N'Mực một nắng nước sa tế', -- name - nvarchar(100)
+          1, -- idCategory - int
+          120000)
+INSERT dbo.Food
+        ( name, idCategory, price )
+VALUES  ( N'Nghêu hấp xả', 1, 50000)
+INSERT dbo.Food
+        ( name, idCategory, price )
+VALUES  ( N'Dú dê nướng sữa', 2, 60000)
+INSERT dbo.Food
+        ( name, idCategory, price )
+VALUES  ( N'Heo rừng nướng muối ớt', 3, 75000)
+INSERT dbo.Food
+        ( name, idCategory, price )
+VALUES  ( N'Cơm chiên mushi', 4, 999999)
+INSERT dbo.Food
+        ( name, idCategory, price )
+VALUES  ( N'7Up', 5, 15000)
+INSERT dbo.Food
+        ( name, idCategory, price )
+VALUES  ( N'Cafe', 5, 12000)
+
+-- thêm bill
+INSERT	dbo.Bill
+        ( DateCheckIn ,
+          DateCheckOut ,
+          idTable ,
+          status
+        )
+VALUES  ( GETDATE() , -- DateCheckIn - date
+          NULL , -- DateCheckOut - date
+          1 , -- idTable - int
+          0  -- status - int
+        )
+        
+INSERT	dbo.Bill
+        ( DateCheckIn ,
+          DateCheckOut ,
+          idTable ,
+          status
+        )
+VALUES  ( GETDATE() , -- DateCheckIn - date
+          NULL , -- DateCheckOut - date
+          2, -- idTable - int
+          0  -- status - int
+        )
+INSERT	dbo.Bill
+        ( DateCheckIn ,
+          DateCheckOut ,
+          idTable ,
+          status
+        )
+VALUES  ( GETDATE() , -- DateCheckIn - date
+          NULL , -- DateCheckOut - date
+          5, -- idTable - int
+          0  -- status - int
+        )
+
+INSERT	dbo.Bill
+        ( DateCheckIn ,
+          DateCheckOut ,
+          idTable ,
+          status
+        )
+VALUES  ( GETDATE() , -- DateCheckIn - date
+          GETDATE() , -- DateCheckOut - date
+          3 , -- idTable - int
+          1  -- status - int
+        )
+
+-- thêm bill info
+INSERT	dbo.BillInfo
+        ( idBill, idFood, count )
+VALUES  ( 1, -- idBill - int
+          1, -- idFood - int
+          2  -- count - int
+          )
+INSERT	dbo.BillInfo
+        ( idBill, idFood, count )
+VALUES  ( 1, -- idBill - int
+          3, -- idFood - int
+          4  -- count - int
+          )
+INSERT	dbo.BillInfo
+        ( idBill, idFood, count )
+VALUES  ( 1, -- idBill - int
+          5, -- idFood - int
+          1  -- count - int
+          )
+INSERT	dbo.BillInfo
+        ( idBill, idFood, count )
+VALUES  ( 2, -- idBill - int
+          1, -- idFood - int
+          2  -- count - int
+          )
+INSERT	dbo.BillInfo
+        ( idBill, idFood, count )
+VALUES  ( 2, -- idBill - int
+          6, -- idFood - int
+          2  -- count - int
+          )
+INSERT	dbo.BillInfo
+        ( idBill, idFood, count )
+VALUES  ( 3, -- idBill - int
+          5, -- idFood - int
+          2  -- count - int
+          )         
+
+INSERT	dbo.BillInfo
+        ( idBill, idFood, count )
+VALUES  ( 4, -- idBill - int
+          1, -- idFood - int
+          2  -- count - int
+          )      
+GO
+
+CREATE PROC USP_INSERTBill
+@idTable INT
+AS
+BEGIN
+	INSERT dbo.Bill (dateCheckIn , dateCheckOut , idTable , status)
+	VALUES (GETDATE() , NULL , @idTable , 0)
+END
+GO
+
+CREATE PROC USP_INSERTBillInfo
+@idBill INT, @idFood INT, @count INT
+AS
+BEGIN
+	INSERT dbo.BillInfo ( idBill, idFood, count)
+	VALUES (@idBill, @idFood, @count)
+END
+GO
+
+CREATE PROC USP_INSERTBillInfo
+@idBill INT, @idFood INT, @count INT
+AS
+BEGIN
+	DECLARE @isExitBillInfo INT
+	DECLARE @foodCount INT = 1
+	SELECT @isExitBillInfo = id, @foodCount = count FROM dbo.BillInfo WHERE idBill = @idBill AND idFood = @idFood
+	IF (@isExitBillInfo > 0)
+	BEGIN
+		DECLARE @newCount INT = @foodCount + @count
+		IF (@newCount > 0)
+			UPDATE dbo.BillInfo SET count = @foodCount + @count WHERE idFood = @idFood
+		ELSE
+			DELETE dbo.BillInfo WHERE idBill = @idBill AND idFood = @idFood
+	END
+	ELSE
+	BEGIN
+		INSERT dbo.BillInfo ( idBill, idFood, count)
+		VALUES (@idBill, @idFood, @count)
+	END
+END
+GO
+
+DELETE dbo.BillInfo
+DELETE dbo.Bil
+DELETE dbo.FoodCategory
+
+
+CREATE TRIGGER UTG_UpdateBillInfo
+ON dbo.BillInfo FOR INSERT, UPDATE
+AS
+BEGIN
+	DECLARE @idBill INT
+	SELECT @idBill = idBill FROM inserted
+
+	DECLARE @idTable INT
+	SELECT @idTable = idTable FROM dbo.Bill WHERE id = @idBill AND status = 0
+
+	UPDATE dbo.TableFood SET status = N'Có người' WHERE id = @idTable
+END
+GO
+
+CREATE TRIGGER UTG_UpdateBill
+ON dbo.Bill FOR UPDATE
+AS
+BEGIN
+	DECLARE @idBill INT
+	SELECT @idBill = id FROM inserted
+	
+	DECLARE @idTable INT
+	SELECT @idTable = idTable FROM dbo.Bill WHERE id = @idBill
+
+	DECLARE @count INT = 0
+	SELECT @count = COUNT(*) FROM dbo.Bill WHERE idTable = @idTable AND status = 0
+
+	IF(@count = 0)
+		UPDATE dbo.TableFood SET status = N'Trống' WHERE id = @idTable
+END
+GO 
+
+SELECT MAX(id) FROM dbo.Bill
