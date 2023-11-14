@@ -274,8 +274,12 @@ BEGIN
 	SELECT @idTable = idTable FROM dbo.Bill WHERE id = @idBill AND status = 0
 	
 	DECLARE @count INT
-	
-	UPDATE dbo.TableFood SET status = N'Có người' WHERE id = @idTable
+	SELECT @count = COUNT(*) FROM dbo.BillInfo WHERE idBill = @idBill
+
+	IF (@count > 0 )
+		UPDATE dbo.TableFood SET status = N'Có người' WHERE id = @idTable
+	ELSE
+		UPDATE dbo.TableFood SET status = N'Trống' WHERE id = @idTable
 		
 END
 GO
@@ -313,8 +317,8 @@ BEGIN
 	DECLARE @idFirstBill INT
 	DECLARE @idSeconrdBill INT
 
-	DECLARE @isFirstTableEmty INT = 0
-	DECLARE @isSecorndTableEmty INT = 0
+	DECLARE @isFirstTableEmty INT = 1
+	DECLARE @isSecorndTableEmty INT = 1
 
 	SELECT @idSeconrdBill = id FROM dbo.Bill WHERE idTable = @idTable2 AND status = 0
 	SELECT @idFirstBill = id FROM dbo.Bill WHERE idTable = @idTable1 AND status = 0
@@ -325,30 +329,30 @@ BEGIN
 		VALUES (GETDATE(), NULL, @idTable1, 0)
 		SELECT @idFirstBill = MAX(id) FROM dbo.Bill WHERE idTable = @idTable1 AND status = 0
 
-		SET @isFirstTableEmty = 1
+		
 	END
-
+	SELECT @isFirstTableEmty = COUNT(*) FROM dbo.BillInfo WHERE idBill = @idFirstBill
 	IF(@idSeconrdBill IS NULL)
 	BEGIN
 		INSERT dbo.Bill (dateCheckIn, dateCheckOut, idTable, status)
 		VALUES (GETDATE(), NULL, @idTable2, 0)
 		SELECT @idSeconrdBill = MAX(id) FROM dbo.Bill WHERE idTable = @idTable2 AND status = 0
 
-		SET @isSecorndTableEmty = 1
+		
 	END
+	SELECT @isSecorndTableEmty = COUNT(*) FROM dbo.BillInfo WHERE idBill = @idSeconrdBill
 
 	SELECT id INTO IdBillInfoTable FROM dbo.BillInfo WHERE idBill = @idSeconrdBill
 	UPDATE dbo.BillInfo SET idBill = @idSeconrdBill WHERE idBill = @idFirstBill
 	UPDATE dbo.BillInfo SET idBill = @idFirstBill WHERE id IN (SELECT * FROM IdBillInfoTable)
 	DROP TABLE IdBillInfoTable
 
-	IF (@isFirstTableEmty = 1)
+	IF (@isFirstTableEmty = 0)
 		UPDATE dbo.TableFood SET status = N'Trống' WHERE id = @idTable2
-	IF (@isSecorndTableEmty = 1)
+	IF (@isSecorndTableEmty = 0)
 		UPDATE dbo.TableFood SET status = N'Trống' WHERE id = @idTable1
 END
 GO
 
-DELETE BillInfo
-DELETE Bill
+
 
