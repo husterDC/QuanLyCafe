@@ -30,7 +30,12 @@ namespace QuanLyCafe.DTO
             }
             
             this.Status= (int)row["status"];
-            this.Discount = (int)row["discount"];
+
+            if (row["discount"].ToString() != "")
+            {
+                this.Discount = (int)row["discount"];
+            }
+            
         }
 
         private int id;

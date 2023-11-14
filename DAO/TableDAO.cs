@@ -21,6 +21,10 @@ namespace QuanLyCafe.DAO
         public static int TableHeight = 90;
         private TableDAO() { }
 
+        public void SwitchTable(int idt1, int idt2)
+        {
+            DataProvider.Instance.ExecuteQuery("USP_SwitchTable @idTable1 , @idTable2" , new object[] { idt1, idt2 });
+        }
         public List<Table> LoadTableList()
         {
             string query = "USP_GetTableList";

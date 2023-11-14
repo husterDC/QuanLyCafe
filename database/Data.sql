@@ -122,9 +122,6 @@ GO
 EXEC dbo.USP_Login @userName = N'K9', @passWord = N'1'
 
 --Thêm bàn
-INSERT dbo.TableFood (name , status)
-
-VALUES (N'Bàn 1')
 
 DECLARE @i INT = 0
 
@@ -148,7 +145,7 @@ VALUES (N'Thủy sản')
 
 INSERT dbo.FoodCategory (name)
 VALUES (N'Đồ uống')
-
+GO
 -- Thêm món ăn
 
 INSERT dbo.Food (name, idCategory, price)
@@ -171,6 +168,8 @@ VALUES (N'Cocacola', 5, 10000)
 
 INSERT dbo.Food (name, idCategory, price)
 VALUES (N'Pessi', 5, 10000)
+
+GO
 SELECT * FROM dbo.TableFood
 
 --Thêm Bill
@@ -205,6 +204,7 @@ VALUES (4, 6, 2)
 INSERT dbo.BillInfo (idBill, idFood, count)
 VALUES (4, 4, 1)
 
+SELECT * FROM dbo.TableFood
 SELECT * FROM dbo.Bill
 SELECT * FROM dbo.BillInfo
 SELECT * FROM dbo.Food
@@ -217,7 +217,7 @@ CREATE PROC USP_GetTableList
 AS SELECT * FROM dbo.TableFood
 GO
 
-ALTER PROC USP_INSERTBill
+CREATE PROC USP_INSERTBill
 @idTable INT
 AS
 BEGIN
@@ -263,7 +263,7 @@ DELETE dbo.Bill
 
 
 
-CREATE TRIGGER UTG_UpdateBillInfo
+ALTER TRIGGER UTG_UpdateBillInfo
 ON dbo.BillInfo FOR INSERT, UPDATE
 AS
 BEGIN
@@ -272,10 +272,14 @@ BEGIN
 
 	DECLARE @idTable INT
 	SELECT @idTable = idTable FROM dbo.Bill WHERE id = @idBill AND status = 0
-
+	
+	DECLARE @count INT
+	
 	UPDATE dbo.TableFood SET status = N'Có người' WHERE id = @idTable
+		
 END
 GO
+
 
 CREATE TRIGGER UTG_UpdateBill
 ON dbo.Bill FOR UPDATE
@@ -289,7 +293,6 @@ BEGIN
 
 	DECLARE @count INT = 0
 	SELECT @count = COUNT(*) FROM dbo.Bill WHERE idTable = @idTable AND status = 0
-
 	IF(@count = 0)
 		UPDATE dbo.TableFood SET status = N'Trống' WHERE id = @idTable
 END
@@ -302,4 +305,50 @@ UPDATE dbo.Bill SET discount = 0
 
 
 
+
+ALTER PROC USP_SwitchTable
+@idTable1 INT , @idTable2 INT
+AS
+BEGIN
+	DECLARE @idFirstBill INT
+	DECLARE @idSeconrdBill INT
+
+	DECLARE @isFirstTableEmty INT = 0
+	DECLARE @isSecorndTableEmty INT = 0
+
+	SELECT @idSeconrdBill = id FROM dbo.Bill WHERE idTable = @idTable2 AND status = 0
+	SELECT @idFirstBill = id FROM dbo.Bill WHERE idTable = @idTable1 AND status = 0
+
+	IF(@idFirstBill IS NULL)
+	BEGIN
+		INSERT dbo.Bill (dateCheckIn, dateCheckOut, idTable, status)
+		VALUES (GETDATE(), NULL, @idTable1, 0)
+		SELECT @idFirstBill = MAX(id) FROM dbo.Bill WHERE idTable = @idTable1 AND status = 0
+
+		SET @isFirstTableEmty = 1
+	END
+
+	IF(@idSeconrdBill IS NULL)
+	BEGIN
+		INSERT dbo.Bill (dateCheckIn, dateCheckOut, idTable, status)
+		VALUES (GETDATE(), NULL, @idTable2, 0)
+		SELECT @idSeconrdBill = MAX(id) FROM dbo.Bill WHERE idTable = @idTable2 AND status = 0
+
+		SET @isSecorndTableEmty = 1
+	END
+
+	SELECT id INTO IdBillInfoTable FROM dbo.BillInfo WHERE idBill = @idSeconrdBill
+	UPDATE dbo.BillInfo SET idBill = @idSeconrdBill WHERE idBill = @idFirstBill
+	UPDATE dbo.BillInfo SET idBill = @idFirstBill WHERE id IN (SELECT * FROM IdBillInfoTable)
+	DROP TABLE IdBillInfoTable
+
+	IF (@isFirstTableEmty = 1)
+		UPDATE dbo.TableFood SET status = N'Trống' WHERE id = @idTable2
+	IF (@isSecorndTableEmty = 1)
+		UPDATE dbo.TableFood SET status = N'Trống' WHERE id = @idTable1
+END
+GO
+
+DELETE BillInfo
+DELETE Bill
 

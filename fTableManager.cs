@@ -21,6 +21,7 @@ namespace QuanLyCafe
             InitializeComponent();
             LoadTable();
             LoadCaterogy();
+            LoadComboxTable(cbSwitchTable);
             
         }
         #region Method
@@ -50,6 +51,11 @@ namespace QuanLyCafe
             }
         }
 
+        void LoadComboxTable (ComboBox cb)
+        {
+            cb.DataSource = TableDAO.Instance.LoadTableList();
+            cb.DisplayMember = "Name";
+        }
         void LoadCaterogy()
         {
             List<FoodCaterogy> listCaterogy = FoodCaterogyDAO.Instance.GetListFoodCaterogy();
@@ -149,14 +155,19 @@ namespace QuanLyCafe
 
         private void btnPay_Click(object sender, EventArgs e)
         {
+            int tableId = 1;
             Table table = listwBill.Tag as Table;
-            int idBill = BillDAO.Instance.GetUncheckBillIDByTableID(table.Id);
+            if (table != null)
+            {
+                tableId = table.Id;
+            }
+            int idBill = BillDAO.Instance.GetUncheckBillIDByTableID(tableId);
             int discount = (int)nUDDiscount.Value;
-            double totalPrice = Convert.ToDouble(textTotalPrice.Text.Split(',')[0]);
+            double totalPrice = Convert.ToDouble(textTotalPrice.Text.Split(',')[0])*1000;
             double finalPrice = totalPrice - (totalPrice / 100) * discount;
             if (idBill != -1)
             {
-                if (MessageBox.Show(string.Format("Bạn có muốn thanh toán hóa đơn cho bàn {0} \n Tổng tiền - (Tổng tiền/100)x Giảm giá = {1} -{1}/100*{2} = {3}" ,table.Name, totalPrice, discount, finalPrice), "Thông báo", MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK)
+                if (MessageBox.Show(string.Format("Bạn có muốn thanh toán hóa đơn cho {0} \nTổng tiền - (Tổng tiền/100)x Giảm giá : \n{1} -{1}/100*{2} = {3}", table.Name, totalPrice, discount, finalPrice), "Thông báo", MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
                     BillDAO.Instance.CheckOut(idBill, discount);
                     ShowBill(table.Id);
@@ -165,7 +176,19 @@ namespace QuanLyCafe
             LoadTable();
         }
 
+        private void btnSwitchTable_Click(object sender, EventArgs e)
+        {
+            
+            int idt1 = (listwBill.Tag as Table).Id;
 
+            int idt2 = (cbSwitchTable.SelectedItem as Table).Id;
+            if (MessageBox.Show(string.Format("Bạn có thực sự muốn chuyển bàn {0} sang {1} không?", (listwBill.Tag as Table).Name, (cbSwitchTable.SelectedItem as Table).Name), "Thông báo", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            {
+                TableDAO.Instance.SwitchTable(idt1, idt2);
+                LoadTable();
+            }
+            
+        }
         #endregion
 
         private void btnDiscount_Click(object sender, EventArgs e)
@@ -179,5 +202,7 @@ namespace QuanLyCafe
             textTotalPrice.Text = finalPrice.ToString("c", culture);
             */
         }
+
+        
     }
 }
