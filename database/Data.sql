@@ -310,7 +310,7 @@ UPDATE dbo.Bill SET discount = 0
 
 
 
-ALTER PROC USP_SwitchTable
+CREATE PROC USP_SwitchTable
 @idTable1 INT , @idTable2 INT
 AS
 BEGIN
@@ -354,5 +354,16 @@ BEGIN
 END
 GO
 
+ALTER TABLE dbo.Bill ADD totalPrice FLOAT
+
+ALTER PROC USP_GetListBillByDate
+@checkInDate DATE, @checkOutDate DATE
+AS
+BEGIN
+	
+	SELECT t.name AS [Tên bàn], b.totalPrice AS [Tổng tiền], b.dateCheckIn AS [Ngày vào], b.dateCheckOut AS [Ngày ra], b.discount AS [Giảm giá (%)]
+	FROM dbo.Bill AS b, dbo.TableFood AS t
+	WHERE dateCheckIn >= @checkInDate AND dateCheckOut <= @checkOutDate AND b.status = 1 AND t.id = b.idTable
+END
 
 

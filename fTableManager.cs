@@ -169,7 +169,7 @@ namespace QuanLyCafe
             {
                 if (MessageBox.Show(string.Format("Bạn có muốn thanh toán hóa đơn cho {0} \nTổng tiền - (Tổng tiền/100)x Giảm giá : \n{1} -{1}/100*{2} = {3}", table.Name, totalPrice, discount, finalPrice), "Thông báo", MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
-                    BillDAO.Instance.CheckOut(idBill, discount);
+                    BillDAO.Instance.CheckOut(idBill, discount, (float)finalPrice);
                     ShowBill(table.Id);
                 }
             }

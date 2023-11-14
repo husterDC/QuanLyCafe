@@ -39,6 +39,11 @@ namespace QuanLyCafe.DAO
             DataProvider.Instance.ExecuteQuery(query, new object[] { id });
         }
 
+        public DataTable GetListBillByDate (DateTime checkIn, DateTime checkOut)
+        {
+            return DataProvider.Instance.ExecuteQuery("EXEC USP_GetListBillByDate @checkInDate , @checkOutDate", new object[] { checkIn, checkOut });
+        }
+
         public int GetMaxIdBill()
         {
             try
@@ -51,9 +56,9 @@ namespace QuanLyCafe.DAO
             }
         }
 
-        public void CheckOut(int id, int discount)
+        public void CheckOut(int id, int discount, float totalPrice)
         {
-            string query = "UPDATE dbo.Bill SET dateCheckOut = GETDATE(), status = 1, " + "discount = " + discount + " WHERE id = " + id;
+            string query = "UPDATE dbo.Bill SET dateCheckOut = GETDATE(), status = 1, " + "discount = " + discount + ", totalPrice = " + totalPrice + " WHERE id = " + id;
             DataProvider.Instance.ExecuteNonQuery(query);
         }
     }
