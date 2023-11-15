@@ -32,16 +32,16 @@
             this.texbUserName = new System.Windows.Forms.TextBox();
             this.labelUserName = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textbDisplayName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textbPassWord = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.textbNewPassWord = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.panel5 = new System.Windows.Forms.Panel();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textbNewPassWordAgain = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnExit = new System.Windows.Forms.Button();
@@ -80,19 +80,19 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.textBox1);
+            this.panel1.Controls.Add(this.textbDisplayName);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(12, 54);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(458, 36);
             this.panel1.TabIndex = 2;
             // 
-            // textBox1
+            // textbDisplayName
             // 
-            this.textBox1.Location = new System.Drawing.Point(141, 6);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(314, 20);
-            this.textBox1.TabIndex = 2;
+            this.textbDisplayName.Location = new System.Drawing.Point(141, 6);
+            this.textbDisplayName.Name = "textbDisplayName";
+            this.textbDisplayName.Size = new System.Drawing.Size(314, 20);
+            this.textbDisplayName.TabIndex = 2;
             // 
             // label1
             // 
@@ -106,19 +106,20 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.textBox2);
+            this.panel3.Controls.Add(this.textbPassWord);
             this.panel3.Controls.Add(this.label2);
             this.panel3.Location = new System.Drawing.Point(12, 96);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(458, 36);
             this.panel3.TabIndex = 3;
             // 
-            // textBox2
+            // textbPassWord
             // 
-            this.textBox2.Location = new System.Drawing.Point(141, 6);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(314, 20);
-            this.textBox2.TabIndex = 2;
+            this.textbPassWord.Location = new System.Drawing.Point(141, 6);
+            this.textbPassWord.Name = "textbPassWord";
+            this.textbPassWord.Size = new System.Drawing.Size(314, 20);
+            this.textbPassWord.TabIndex = 2;
+            this.textbPassWord.UseSystemPasswordChar = true;
             // 
             // label2
             // 
@@ -132,19 +133,20 @@
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.textBox3);
+            this.panel4.Controls.Add(this.textbNewPassWord);
             this.panel4.Controls.Add(this.label3);
             this.panel4.Location = new System.Drawing.Point(12, 138);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(458, 36);
             this.panel4.TabIndex = 4;
             // 
-            // textBox3
+            // textbNewPassWord
             // 
-            this.textBox3.Location = new System.Drawing.Point(141, 6);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(314, 20);
-            this.textBox3.TabIndex = 2;
+            this.textbNewPassWord.Location = new System.Drawing.Point(141, 6);
+            this.textbNewPassWord.Name = "textbNewPassWord";
+            this.textbNewPassWord.Size = new System.Drawing.Size(314, 20);
+            this.textbNewPassWord.TabIndex = 2;
+            this.textbNewPassWord.UseSystemPasswordChar = true;
             // 
             // label3
             // 
@@ -158,19 +160,20 @@
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.textBox4);
+            this.panel5.Controls.Add(this.textbNewPassWordAgain);
             this.panel5.Controls.Add(this.label4);
             this.panel5.Location = new System.Drawing.Point(12, 180);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(458, 36);
             this.panel5.TabIndex = 5;
             // 
-            // textBox4
+            // textbNewPassWordAgain
             // 
-            this.textBox4.Location = new System.Drawing.Point(141, 6);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(314, 20);
-            this.textBox4.TabIndex = 2;
+            this.textbNewPassWordAgain.Location = new System.Drawing.Point(141, 6);
+            this.textbNewPassWordAgain.Name = "textbNewPassWordAgain";
+            this.textbNewPassWordAgain.Size = new System.Drawing.Size(314, 20);
+            this.textbNewPassWordAgain.TabIndex = 2;
+            this.textbNewPassWordAgain.UseSystemPasswordChar = true;
             // 
             // label4
             // 
@@ -190,6 +193,7 @@
             this.btnUpdate.TabIndex = 6;
             this.btnUpdate.Text = "Cập nhật";
             this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
             // 
             // btnExit
             // 
@@ -234,16 +238,16 @@
         private System.Windows.Forms.TextBox texbUserName;
         private System.Windows.Forms.Label labelUserName;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textbDisplayName;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textbPassWord;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox textbNewPassWord;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Panel panel5;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox textbNewPassWordAgain;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnExit;

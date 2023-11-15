@@ -125,7 +125,7 @@
             this.textTotalPrice.Font = new System.Drawing.Font("Arial", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textTotalPrice.ForeColor = System.Drawing.Color.Red;
             this.textTotalPrice.Location = new System.Drawing.Point(159, 46);
-            this.textTotalPrice.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textTotalPrice.Margin = new System.Windows.Forms.Padding(2);
             this.textTotalPrice.Name = "textTotalPrice";
             this.textTotalPrice.ReadOnly = true;
             this.textTotalPrice.Size = new System.Drawing.Size(96, 24);
@@ -262,15 +262,16 @@
             // thôngTinCáNhânToolStripMenuItem
             // 
             this.thôngTinCáNhânToolStripMenuItem.Name = "thôngTinCáNhânToolStripMenuItem";
-            this.thôngTinCáNhânToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.thôngTinCáNhânToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.thôngTinCáNhânToolStripMenuItem.Text = "Thông tin cá nhân";
             this.thôngTinCáNhânToolStripMenuItem.Click += new System.EventHandler(this.thôngTinCáNhânToolStripMenuItem_Click);
             // 
             // đăngXuẩtToolStripMenuItem
             // 
             this.đăngXuẩtToolStripMenuItem.Name = "đăngXuẩtToolStripMenuItem";
-            this.đăngXuẩtToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.đăngXuẩtToolStripMenuItem.Text = "Đăng xuẩt";
+            this.đăngXuẩtToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.đăngXuẩtToolStripMenuItem.Text = "Đăng xuất";
+            this.đăngXuẩtToolStripMenuItem.Click += new System.EventHandler(this.đăngXuẩtToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 

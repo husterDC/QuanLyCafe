@@ -1,4 +1,5 @@
 ﻿using QuanLyCafe.DAO;
+using QuanLyCafe.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +14,7 @@ namespace QuanLyCafe
 {
     public partial class fLogin : Form
     {
+
         public fLogin()
         {
             InitializeComponent();
@@ -29,7 +31,8 @@ namespace QuanLyCafe
             string passWord = texbPassword.Text;
             if(Login(userName, passWord))
             {
-                fTableManager f = new fTableManager();
+                Account loginAccount = AccountDO.Instance.GetAccountByUserName(userName);    
+                fTableManager f = new fTableManager(loginAccount);
                 this.Hide();
                 f.ShowDialog();
                 this.Show();
@@ -44,7 +47,7 @@ namespace QuanLyCafe
         }
         private void btnExit_Click(object sender, EventArgs e)
         {
-
+            Application.Exit();
         }
 
         private void fLogin_FormClosing(object sender, FormClosingEventArgs e)

@@ -18,15 +18,18 @@ namespace QuanLyCafe
         public fAdmin()
         {
             InitializeComponent();
-            LoadTimeFormat();
+            Load();
             LoadAccountList();
             LoadDateTimePickerBill();
             LoadListBillByDate(dateTimePickerFromDate.Value, dateTimePickerToDate.Value);
         }
 
-        void LoadTimeFormat ()
+        void Load ()
         {
-           
+            LoadAccountList();
+            LoadDateTimePickerBill();
+            LoadListBillByDate(dateTimePickerFromDate.Value, dateTimePickerToDate.Value);
+            LoadFoodList();
             CultureInfo culture = new CultureInfo("vi-VN");
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
@@ -36,17 +39,13 @@ namespace QuanLyCafe
         } 
         void LoadFoodList()
         {
-            string query = "select * from food";
-
-            dataGridViewFood.DataSource = DataProvider.Instance.ExecuteQuery(query);
+            dataGridViewFood.DataSource = FoodDAO.Instance.GetListFood();
         }
 
         void LoadAccountList()
         {
 
-            string query = "EXEC dbo.USP_GetListAccountByUserName @userName";
-
-            dataGridViewAdmin.DataSource = DataProvider.Instance.ExecuteQuery(query, new object[] { "K9" });
+            
         }
 
         void LoadDateTimePickerBill ()
@@ -68,6 +67,11 @@ namespace QuanLyCafe
         private void btnViewBill_Click(object sender, EventArgs e)
         {
             LoadListBillByDate(dateTimePickerFromDate.Value, dateTimePickerToDate.Value);
+        }
+
+        private void btnViewFood_Click(object sender, EventArgs e)
+        {
+            LoadFoodList();
         }
     }
 }

@@ -16,15 +16,31 @@ namespace QuanLyCafe
 {
     public partial class fTableManager : Form
     {
-        public fTableManager()
+        private Account logInAccount;
+
+        public Account LogInAccount
+        {
+            get { return logInAccount; }
+            set { logInAccount = value; }
+        }
+
+        public fTableManager(Account acc)
         {
             InitializeComponent();
+            this.logInAccount = acc;
+            ChangeAccount(logInAccount.Type);
             LoadTable();
             LoadCaterogy();
             LoadComboxTable(cbSwitchTable);
             
         }
         #region Method
+
+        void ChangeAccount(int type)
+        {
+            adminToolStripMenuItem.Enabled = type == 1;
+            thôngTinTàiKhoảnToolStripMenuItem.Text += " (" + logInAccount.DisplayName + ")";
+        }
         void LoadTable()
         {
             flpanelTable.Controls.Clear();
@@ -45,9 +61,7 @@ namespace QuanLyCafe
                         btn.BackColor = Color.Red;
                         break;
                 }
-
                 flpanelTable.Controls.Add(btn);
-
             }
         }
 
@@ -111,8 +125,14 @@ namespace QuanLyCafe
 
         private void thôngTinCáNhânToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            fAccountProfile f = new fAccountProfile();
+            fAccountProfile f = new fAccountProfile(logInAccount);
+            f.UpdateAccount += f_UpdateAccount;
             f.ShowDialog();
+        }
+
+        private void f_UpdateAccount(object sender, AccountEvent e)
+        {
+            thôngTinTàiKhoảnToolStripMenuItem.Text = "Thông tin tài khoản (" + e.Acc.DisplayName +")";
         }
 
         private void adminToolStripMenuItem_Click(object sender, EventArgs e)
@@ -203,6 +223,9 @@ namespace QuanLyCafe
             */
         }
 
-        
+        private void đăngXuẩtToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

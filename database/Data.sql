@@ -356,7 +356,7 @@ GO
 
 ALTER TABLE dbo.Bill ADD totalPrice FLOAT
 
-ALTER PROC USP_GetListBillByDate
+CREATE PROC USP_GetListBillByDate
 @checkInDate DATE, @checkOutDate DATE
 AS
 BEGIN
@@ -365,5 +365,24 @@ BEGIN
 	FROM dbo.Bill AS b, dbo.TableFood AS t
 	WHERE dateCheckIn >= @checkInDate AND dateCheckOut <= @checkOutDate AND b.status = 1 AND t.id = b.idTable
 END
+GO
 
+CREATE PROC USP_UpdateAccount
+@userName NVARCHAR(100), @displayName NVARCHAR(100), @passWord NVARCHAR(100), @newPassWord NVARCHAR(100)
+AS
+BEGIN
+	DECLARE @isRightPass INT
+
+	SELECT @isRightPass = COUNT(*) FROM dbo.Account WHERE userName = @userName AND passWord = @passWord
+
+	IF (@isRightPass = 1)
+	BEGIN
+		IF (@newPassWord = NULL OR @newPassWord = '')
+		BEGIN
+			UPDATE dbo.Account SET displayName = @displayName WHERE userName = @userName
+		END
+		ELSE
+			UPDATE dbo.Account SET displayName = @displayName, passWord = @newPassWord WHERE userName = @userName
+	END
+END
 
