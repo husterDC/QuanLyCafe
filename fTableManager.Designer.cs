@@ -168,7 +168,7 @@
             this.btnDiscount.TabIndex = 4;
             this.btnDiscount.Text = "Giảm giá (%)";
             this.btnDiscount.UseVisualStyleBackColor = true;
-            this.btnDiscount.Click += new System.EventHandler(this.btnDiscount_Click);
+            
             // 
             // btnPay
             // 

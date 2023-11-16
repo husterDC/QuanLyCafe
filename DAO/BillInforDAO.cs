@@ -38,5 +38,11 @@ namespace QuanLyCafe.DAO
             string query = "EXEC USP_InsertBillInfo @idTable , @idFood , @count";
             DataProvider.Instance.ExecuteQuery(query, new object[] { idBill , idFood , count });
         }
+
+        public void DeleteBillInfoByFoodId (int idFood)
+        {
+            string query = string.Format("DELETE dbo.BillInfo WHERE idFood = {0}", idFood);
+            DataProvider.Instance.ExecuteNonQuery(query);
+        }
     }
 }

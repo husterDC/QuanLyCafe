@@ -34,5 +34,18 @@ namespace QuanLyCafe.DAO
 
             return listCaterogy;
         }
+
+        public FoodCaterogy GetCaterogyById(int id)
+        {
+            FoodCaterogy foodCaterogy = null;
+            string query = "SELECT * FROM dbo.FoodCategory WHERE id = " + id;
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+            foreach(DataRow item in data.Rows)
+            {
+                foodCaterogy = new FoodCaterogy(item);
+                return foodCaterogy;
+            }
+            return foodCaterogy;
+        }
     }
 }

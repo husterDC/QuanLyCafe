@@ -7,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,7 +44,7 @@ namespace QuanLyCafe
         }
         void LoadTable()
         {
-            flpanelTable.Controls.Clear();
+            flpanelTable.Controls.Clear();           
             List<Table> tablelist = TableDAO.Instance.LoadTableList();
             foreach (Table table in tablelist)
             {
@@ -51,6 +52,15 @@ namespace QuanLyCafe
                 btn.Text = table.Name + Environment.NewLine + table.Status;
                 btn.Click += Btn_Click;
                 btn.Tag = table;
+                int idTable = table.Id;
+                int idBill = BillDAO.Instance.GetUncheckBillIDByTableID(idTable);
+                List<BillInfor> billInfor = BillInforDAO.Instance.GetListBillInfor(idBill);
+
+                if(billInfor.Count <= 0)
+                {
+                    table.Status = "Trống";
+                }
+
 
                 switch (table.Status) {
 
@@ -138,7 +148,40 @@ namespace QuanLyCafe
         private void adminToolStripMenuItem_Click(object sender, EventArgs e)
         {
             fAdmin f = new fAdmin();
+            f.InsertFood += F_InsertFood;
+            f.UpdateFood += F_UpdateFood;
+            f.DeleteFood += F_DeleteFood;
             f.ShowDialog();
+        }
+
+        private void F_DeleteFood(object sender, EventArgs e)
+        {
+            LoadFoodListByCaterogyID((cbCaterogy.SelectedItem as FoodCaterogy).Id);
+            LoadTable();
+            if (listwBill.Tag != null)
+            {
+                ShowBill((listwBill.Tag as Table).Id);
+            }
+            
+        }
+
+        private void F_UpdateFood(object sender, EventArgs e)
+        {
+            LoadFoodListByCaterogyID((cbCaterogy.SelectedItem as FoodCaterogy).Id);
+            if (listwBill.Tag != null)
+            {
+                ShowBill((listwBill.Tag as Table).Id);
+            }
+            
+        }
+
+        private void F_InsertFood(object sender, EventArgs e)
+        {
+            LoadFoodListByCaterogyID((cbCaterogy.SelectedItem as FoodCaterogy).Id);
+            if (listwBill.Tag != null)
+            {
+                ShowBill((listwBill.Tag as Table).Id);
+            }
         }
 
         private void cbFood_SelectedIndexChanged(object sender, EventArgs e)
@@ -156,16 +199,31 @@ namespace QuanLyCafe
         private void btnAddFood_Click(object sender, EventArgs e)
         {
             Table table = listwBill.Tag as Table;
+            if (table == null)
+            {
+                MessageBox.Show("Xin hãy chọn bàn", "Thông báo");
+                return;
+            }
+
             int idBill = BillDAO.Instance.GetUncheckBillIDByTableID(table.Id);
             int FoodId = (cbFood.SelectedItem as Food).Id;
             int count = (int)nUDFood.Value;
+            
             if (idBill == -1)
             {
-                BillDAO.Instance.InsertBill(table.Id);
-                BillInforDAO.Instance.InsertBillInfo(BillDAO.Instance.GetMaxIdBill(), FoodId, count);
+                if (count <= 0)
+                {
+                    MessageBox.Show("Không thể giảm món khi món ăn chưa có trong Bill", "Thông báo");
+                    return;
+                } else
+                {
+                    BillDAO.Instance.InsertBill(table.Id);
+
+                    BillInforDAO.Instance.InsertBillInfo(BillDAO.Instance.GetMaxIdBill(), FoodId, count);
+                }               
             }
             else
-            {
+            {              
                 BillInforDAO.Instance.InsertBillInfo(idBill, FoodId, count);
             }
 
@@ -211,17 +269,7 @@ namespace QuanLyCafe
         }
         #endregion
 
-        private void btnDiscount_Click(object sender, EventArgs e)
-        {
-            /*
-            int discount = (int)nUDDiscount.Value;
-            double totalPrice = Convert.ToDouble(textTotalPrice.Text.Split(',')[0]);
-            double finalPrice = totalPrice - (totalPrice / 100) * discount;
-            CultureInfo culture = new CultureInfo("vi-VN");
-            //Thread.CurrentThread.CurrentCulture = culture;
-            textTotalPrice.Text = finalPrice.ToString("c", culture);
-            */
-        }
+        
 
         private void đăngXuẩtToolStripMenuItem_Click(object sender, EventArgs e)
         {

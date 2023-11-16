@@ -82,7 +82,7 @@
             this.tpFood = new System.Windows.Forms.TabPage();
             this.panel6 = new System.Windows.Forms.Panel();
             this.panel10 = new System.Windows.Forms.Panel();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.nUDFoodPrice = new System.Windows.Forms.NumericUpDown();
             this.lbPrice = new System.Windows.Forms.Label();
             this.panel9 = new System.Windows.Forms.Panel();
             this.cbCaterogyFood = new System.Windows.Forms.ComboBox();
@@ -98,7 +98,7 @@
             this.btnFindFood = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
             this.btnViewFood = new System.Windows.Forms.Button();
-            this.btnFixFood = new System.Windows.Forms.Button();
+            this.btnEditFood = new System.Windows.Forms.Button();
             this.btnDeleteFood = new System.Windows.Forms.Button();
             this.btnAddFood = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -137,7 +137,7 @@
             this.tpFood.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel10.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nUDFoodPrice)).BeginInit();
             this.panel9.SuspendLayout();
             this.panel8.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -159,7 +159,7 @@
             this.tpAcconut.Controls.Add(this.panel22);
             this.tpAcconut.Location = new System.Drawing.Point(4, 22);
             this.tpAcconut.Name = "tpAcconut";
-            this.tpAcconut.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tpAcconut.Padding = new System.Windows.Forms.Padding(3);
             this.tpAcconut.Size = new System.Drawing.Size(737, 495);
             this.tpAcconut.TabIndex = 4;
             this.tpAcconut.Text = "Tài khoản";
@@ -325,7 +325,7 @@
             this.tpTable.Controls.Add(this.panel15);
             this.tpTable.Location = new System.Drawing.Point(4, 22);
             this.tpTable.Name = "tpTable";
-            this.tpTable.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tpTable.Padding = new System.Windows.Forms.Padding(3);
             this.tpTable.Size = new System.Drawing.Size(737, 495);
             this.tpTable.TabIndex = 3;
             this.tpTable.Text = "Bàn ăn";
@@ -491,7 +491,7 @@
             this.tcCategoryFood.Controls.Add(this.panel33);
             this.tcCategoryFood.Location = new System.Drawing.Point(4, 22);
             this.tcCategoryFood.Name = "tcCategoryFood";
-            this.tcCategoryFood.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tcCategoryFood.Padding = new System.Windows.Forms.Padding(3);
             this.tcCategoryFood.Size = new System.Drawing.Size(737, 495);
             this.tcCategoryFood.TabIndex = 2;
             this.tcCategoryFood.Text = "Danh mục";
@@ -630,7 +630,7 @@
             this.tpFood.Controls.Add(this.panel3);
             this.tpFood.Location = new System.Drawing.Point(4, 22);
             this.tpFood.Name = "tpFood";
-            this.tpFood.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tpFood.Padding = new System.Windows.Forms.Padding(3);
             this.tpFood.Size = new System.Drawing.Size(737, 495);
             this.tpFood.TabIndex = 1;
             this.tpFood.Text = "Thức ăn";
@@ -649,25 +649,24 @@
             // 
             // panel10
             // 
-            this.panel10.Controls.Add(this.numericUpDown1);
+            this.panel10.Controls.Add(this.nUDFoodPrice);
             this.panel10.Controls.Add(this.lbPrice);
             this.panel10.Location = new System.Drawing.Point(3, 147);
             this.panel10.Name = "panel10";
             this.panel10.Size = new System.Drawing.Size(296, 42);
             this.panel10.TabIndex = 4;
             // 
-            // numericUpDown1
+            // nUDFoodPrice
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(133, 8);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.nUDFoodPrice.Location = new System.Drawing.Point(133, 8);
+            this.nUDFoodPrice.Maximum = new decimal(new int[] {
             1000000,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(160, 20);
-            this.numericUpDown1.TabIndex = 1;
-            this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.nUDFoodPrice.Name = "nUDFoodPrice";
+            this.nUDFoodPrice.Size = new System.Drawing.Size(160, 20);
+            this.nUDFoodPrice.TabIndex = 1;
             // 
             // lbPrice
             // 
@@ -690,6 +689,7 @@
             // 
             // cbCaterogyFood
             // 
+            this.cbCaterogyFood.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbCaterogyFood.FormattingEnabled = true;
             this.cbCaterogyFood.Location = new System.Drawing.Point(133, 9);
             this.cbCaterogyFood.Name = "cbCaterogyFood";
@@ -747,6 +747,7 @@
             this.textbIDFood.Name = "textbIDFood";
             this.textbIDFood.Size = new System.Drawing.Size(160, 20);
             this.textbIDFood.TabIndex = 1;
+            this.textbIDFood.TextChanged += new System.EventHandler(this.textbIDFood_TextChanged);
             // 
             // lbIDFood
             // 
@@ -786,7 +787,7 @@
             // panel4
             // 
             this.panel4.Controls.Add(this.btnViewFood);
-            this.panel4.Controls.Add(this.btnFixFood);
+            this.panel4.Controls.Add(this.btnEditFood);
             this.panel4.Controls.Add(this.btnDeleteFood);
             this.panel4.Controls.Add(this.btnAddFood);
             this.panel4.Location = new System.Drawing.Point(6, 6);
@@ -804,14 +805,15 @@
             this.btnViewFood.UseVisualStyleBackColor = true;
             this.btnViewFood.Click += new System.EventHandler(this.btnViewFood_Click);
             // 
-            // btnFixFood
+            // btnEditFood
             // 
-            this.btnFixFood.Location = new System.Drawing.Point(225, 3);
-            this.btnFixFood.Name = "btnFixFood";
-            this.btnFixFood.Size = new System.Drawing.Size(75, 48);
-            this.btnFixFood.TabIndex = 2;
-            this.btnFixFood.Text = "Sửa";
-            this.btnFixFood.UseVisualStyleBackColor = true;
+            this.btnEditFood.Location = new System.Drawing.Point(225, 3);
+            this.btnEditFood.Name = "btnEditFood";
+            this.btnEditFood.Size = new System.Drawing.Size(75, 48);
+            this.btnEditFood.TabIndex = 2;
+            this.btnEditFood.Text = "Sửa";
+            this.btnEditFood.UseVisualStyleBackColor = true;
+            this.btnEditFood.Click += new System.EventHandler(this.btnEditFood_Click);
             // 
             // btnDeleteFood
             // 
@@ -821,6 +823,7 @@
             this.btnDeleteFood.TabIndex = 1;
             this.btnDeleteFood.Text = "Xóa";
             this.btnDeleteFood.UseVisualStyleBackColor = true;
+            this.btnDeleteFood.Click += new System.EventHandler(this.btnDeleteFood_Click);
             // 
             // btnAddFood
             // 
@@ -830,6 +833,7 @@
             this.btnAddFood.TabIndex = 0;
             this.btnAddFood.Text = "Thêm";
             this.btnAddFood.UseVisualStyleBackColor = true;
+            this.btnAddFood.Click += new System.EventHandler(this.btnAddFood_Click);
             // 
             // panel3
             // 
@@ -854,7 +858,7 @@
             this.tpBill.Controls.Add(this.panel2);
             this.tpBill.Location = new System.Drawing.Point(4, 22);
             this.tpBill.Name = "tpBill";
-            this.tpBill.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tpBill.Padding = new System.Windows.Forms.Padding(3);
             this.tpBill.Size = new System.Drawing.Size(737, 495);
             this.tpBill.TabIndex = 0;
             this.tpBill.Text = "Doanh thu";
@@ -970,7 +974,7 @@
             this.panel6.ResumeLayout(false);
             this.panel10.ResumeLayout(false);
             this.panel10.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nUDFoodPrice)).EndInit();
             this.panel9.ResumeLayout(false);
             this.panel9.PerformLayout();
             this.panel8.ResumeLayout(false);
@@ -1012,7 +1016,7 @@
         private System.Windows.Forms.TabPage tpFood;
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.Panel panel10;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown nUDFoodPrice;
         private System.Windows.Forms.Label lbPrice;
         private System.Windows.Forms.Panel panel9;
         private System.Windows.Forms.ComboBox cbCaterogyFood;
@@ -1028,7 +1032,7 @@
         private System.Windows.Forms.Button btnFindFood;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Button btnViewFood;
-        private System.Windows.Forms.Button btnFixFood;
+        private System.Windows.Forms.Button btnEditFood;
         private System.Windows.Forms.Button btnDeleteFood;
         private System.Windows.Forms.Button btnAddFood;
         private System.Windows.Forms.Panel panel3;

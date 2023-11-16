@@ -263,6 +263,7 @@ DELETE dbo.Bill
 
 
 
+
 ALTER TRIGGER UTG_UpdateBillInfo
 ON dbo.BillInfo FOR INSERT, UPDATE
 AS
@@ -301,6 +302,8 @@ BEGIN
 		UPDATE dbo.TableFood SET status = N'Trống' WHERE id = @idTable
 END
 GO 
+
+
 
 ALTER TABLE dbo.Bill
 ADD discount INT
@@ -386,3 +389,4 @@ BEGIN
 	END
 END
 
+SELECT * FROM dbo.Food
