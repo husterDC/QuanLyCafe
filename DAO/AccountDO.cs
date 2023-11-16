@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace QuanLyCafe.DAO
 {
@@ -42,6 +43,32 @@ namespace QuanLyCafe.DAO
                 return new Account(item);
             }
             return null;
+        }
+
+        public List<Account> GetAccountList()
+        {
+            string query = "SELECT * FROM dbo.Account";
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+            List<Account> accountList = new List<Account>();
+            foreach (DataRow item in data.Rows)
+            {
+
+                accountList.Add(new Account(item));
+            }
+            return accountList;
+        }
+
+        public int GetAccountTypeByUserName(string userName)
+        {
+            string query = "SELECT Type FROM dbo.Account WHERE userName = N'" + userName + "'";
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+            int type = 0;
+            foreach (DataRow item in data.Rows)
+            {
+                type = (int)item["Type"];
+            
+            }
+            return type;
         }
     }
 }

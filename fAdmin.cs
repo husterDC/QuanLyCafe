@@ -17,6 +17,7 @@ namespace QuanLyCafe
     public partial class fAdmin : Form
     {
         BindingSource foodList = new BindingSource();
+        BindingSource accountList = new BindingSource();
         public fAdmin()
         {
             InitializeComponent();
@@ -29,12 +30,15 @@ namespace QuanLyCafe
         void Load ()
         {
             dataGridViewFood.DataSource = foodList;
+            dataGridViewAdmin.DataSource = accountList;
             LoadAccountList();
             LoadDateTimePickerBill();
             LoadListBillByDate(dateTimePickerFromDate.Value, dateTimePickerToDate.Value);
             LoadFoodList();
             AddFoodBinding();
+            AddAccountBinding();
             LoadCaterogyIntoCombobox(cbCaterogyFood);
+            LoadAccountTypeIntoCombobox(cbAccountType);
             CultureInfo culture = new CultureInfo("vi-VN");
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
@@ -47,9 +51,15 @@ namespace QuanLyCafe
             foodList.DataSource = FoodDAO.Instance.GetListFood();
         }
 
+        List<Food> SearchFoodByName(string name)
+        {
+            List<Food> listFood = FoodDAO.Instance.SearchFoodByName(name);
+
+            return listFood;
+        }
         void LoadAccountList()
         {
-
+            accountList.DataSource = AccountDO.Instance.GetAccountList();
             
         }
 
@@ -72,10 +82,17 @@ namespace QuanLyCafe
 
         void AddFoodBinding()
         {
-            textbFood.DataBindings.Add(new Binding("Text", dataGridViewFood.DataSource, "name"));
-            textbIDFood.DataBindings.Add(new Binding("Text", dataGridViewFood.DataSource, "id"));
-            nUDFoodPrice.DataBindings.Add(new Binding("Value", dataGridViewFood.DataSource, "price"));
+            textbFood.DataBindings.Add(new Binding("Text", dataGridViewFood.DataSource, "name", true, DataSourceUpdateMode.Never));
+            textbIDFood.DataBindings.Add(new Binding("Text", dataGridViewFood.DataSource, "id", true, DataSourceUpdateMode.Never));
+            nUDFoodPrice.DataBindings.Add(new Binding("Value", dataGridViewFood.DataSource, "price", true, DataSourceUpdateMode.Never));
             
+        }
+
+
+        void AddAccountBinding()
+        {
+            textbUserName.DataBindings.Add(new Binding("Text", dataGridViewAdmin.DataSource, "userName", true, DataSourceUpdateMode.Never));
+            textbDisplayName.DataBindings.Add(new Binding("Text", dataGridViewAdmin.DataSource, "displayName", true, DataSourceUpdateMode.Never));
 
         }
 
@@ -83,6 +100,13 @@ namespace QuanLyCafe
         {
             cb.DataSource = FoodCaterogyDAO.Instance.GetListFoodCaterogy();
             cb.DisplayMember = "Name";
+            cb.DropDownStyle = ComboBoxStyle.DropDownList;
+        }
+
+        void LoadAccountTypeIntoCombobox(ComboBox cb)
+        {
+            cb.DataSource = AccountDO.Instance.GetAccountList();
+            cb.DisplayMember = "Type";
             cb.DropDownStyle = ComboBoxStyle.DropDownList;
         }
         private void btnViewBill_Click(object sender, EventArgs e)
@@ -98,21 +122,25 @@ namespace QuanLyCafe
         private void textbIDFood_TextChanged(object sender, EventArgs e)
         {
             
-            int id = (int)dataGridViewFood.SelectedCells[0].OwningRow.Cells["caterogyId"].Value;            
-            FoodCaterogy foodCaterogy = FoodCaterogyDAO.Instance.GetCaterogyById(id);
-            cbCaterogyFood.SelectedItem = foodCaterogy;
-            int index = -1;
-            int i = 0;
-            foreach (FoodCaterogy item in cbCaterogyFood.Items)
+            if (dataGridViewFood.SelectedCells.Count > 0 && dataGridViewFood.SelectedCells[0].OwningRow.Cells["caterogyId"].Value != null)
             {
-                if (item.Id == foodCaterogy.Id)
+                int id = (int)dataGridViewFood.SelectedCells[0].OwningRow.Cells["caterogyId"].Value;
+                FoodCaterogy foodCaterogy = FoodCaterogyDAO.Instance.GetCaterogyById(id);
+                cbCaterogyFood.SelectedItem = foodCaterogy;
+                int index = -1;
+                int i = 0;
+                foreach (FoodCaterogy item in cbCaterogyFood.Items)
                 {
-                    index = i;
-                    break;
+                    if (item.Id == foodCaterogy.Id)
+                    {
+                        index = i;
+                        break;
+                    }
+                    i++;
                 }
-                i++;
+                cbCaterogyFood.SelectedIndex = index;
             }
-            cbCaterogyFood.SelectedIndex = index;
+                
             
             
         }
@@ -197,6 +225,39 @@ namespace QuanLyCafe
         {
             add { deleteFood += value; }
             remove { deleteFood -= value; }
+        }
+
+        private void btnFindFood_Click(object sender, EventArgs e)
+        {
+            foodList.DataSource = SearchFoodByName(textbFindFood.Text);
+            
+        }
+
+        private void btnViewAdmin_Click(object sender, EventArgs e)
+        {
+            LoadAccountList();
+        }
+
+        private void textbUserName_TextChanged(object sender, EventArgs e)
+        {
+            if (textbUserName.Text != "")
+            {
+                int type = AccountDO.Instance.GetAccountTypeByUserName(textbUserName.Text);
+
+                int index = -1;
+                int i = 0;
+                foreach (Account item in cbAccountType.Items)
+                {
+                    if (item.Type == type)
+                    {
+                        index = i;
+                        break;
+                    }
+                    i++;
+                }
+                cbAccountType.SelectedIndex = index;
+            }
+
         }
     }
 }
