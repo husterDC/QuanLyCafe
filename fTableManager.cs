@@ -151,7 +151,25 @@ namespace QuanLyCafe
             f.InsertFood += F_InsertFood;
             f.UpdateFood += F_UpdateFood;
             f.DeleteFood += F_DeleteFood;
+            f.InsertCaterogy += F_InsertCaterogy;
+            f.UpdateCaterogy += F_UpdateCaterogy;
+            f.DeleteCaterogy += F_DeleteCaterogy;
             f.ShowDialog();
+        }
+
+        private void F_DeleteCaterogy(object sender, EventArgs e)
+        {
+            LoadCaterogy();
+        }
+
+        private void F_UpdateCaterogy(object sender, EventArgs e)
+        {
+            LoadCaterogy();
+        }
+
+        private void F_InsertCaterogy(object sender, EventArgs e)
+        {
+            LoadCaterogy();
         }
 
         private void F_DeleteFood(object sender, EventArgs e)

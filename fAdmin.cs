@@ -18,6 +18,8 @@ namespace QuanLyCafe
     {
         BindingSource foodList = new BindingSource();
         BindingSource accountList = new BindingSource();
+        BindingSource categoryList = new BindingSource();
+        BindingSource tableList = new BindingSource();
         public fAdmin()
         {
             InitializeComponent();
@@ -27,18 +29,25 @@ namespace QuanLyCafe
             LoadListBillByDate(dateTimePickerFromDate.Value, dateTimePickerToDate.Value);
         }
 
-        void Load ()
+        void Load()
         {
             dataGridViewFood.DataSource = foodList;
             dataGridViewAdmin.DataSource = accountList;
+            dataGridViewCaterogy.DataSource = categoryList;
+            dataGridViewFoodTable.DataSource = tableList;
             LoadAccountList();
             LoadDateTimePickerBill();
             LoadListBillByDate(dateTimePickerFromDate.Value, dateTimePickerToDate.Value);
             LoadFoodList();
+            LoadCategoryList();
+            LoadTableList();
             AddFoodBinding();
             AddAccountBinding();
-            LoadCaterogyIntoCombobox(cbCaterogyFood);
+            AddCaterogyBinding();
+            AddTableBinding();
+            LoadCaterogyIntoCombobox(cbCaterogyFood);           
             LoadAccountTypeIntoCombobox(cbAccountType);
+            LoadTableStatusIntoCombobox(cbFoodTable);
             CultureInfo culture = new CultureInfo("vi-VN");
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
@@ -63,15 +72,24 @@ namespace QuanLyCafe
             
         }
 
+        void LoadCategoryList()
+        {
+            categoryList.DataSource = FoodCaterogyDAO.Instance.GetListFoodCaterogy();
+        }
+
+        void LoadTableList()
+        {
+            tableList.DataSource = TableDAO.Instance.LoadTableList();
+        }
+
+
         void LoadDateTimePickerBill ()
         {
-            
-            
+         
             DateTime today = DateTime.Now;
             dateTimePickerFromDate.Value = new DateTime(today.Year, today.Month, 1);
             dateTimePickerToDate.Value = dateTimePickerFromDate.Value.AddMonths(1).AddDays(-1);
-
-            
+           
         }
 
         void LoadListBillByDate (DateTime checkIn, DateTime checkOut) 
@@ -96,7 +114,23 @@ namespace QuanLyCafe
 
         }
 
-        void LoadCaterogyIntoCombobox (ComboBox cb)
+        void AddCaterogyBinding()
+        {
+            textbIDCaterogy.DataBindings.Add(new Binding("Text", dataGridViewCaterogy.DataSource, "Id", true, DataSourceUpdateMode.Never));
+
+            textbCaterogy.DataBindings.Add(new Binding("Text", dataGridViewCaterogy.DataSource, "Name", true, DataSourceUpdateMode.Never));
+        }
+
+        void AddTableBinding()
+        {
+            textbIDFoodTable.DataBindings.Add(new Binding("Text", dataGridViewFoodTable.DataSource, "Id", true, DataSourceUpdateMode.Never));
+
+            textbFoodTable.DataBindings.Add(new Binding("Text", dataGridViewFoodTable.DataSource, "Name", true, DataSourceUpdateMode.Never));
+        }
+
+
+
+        void LoadCaterogyIntoCombobox(ComboBox cb)
         {
             cb.DataSource = FoodCaterogyDAO.Instance.GetListFoodCaterogy();
             cb.DisplayMember = "Name";
@@ -107,6 +141,13 @@ namespace QuanLyCafe
         {
             cb.DataSource = AccountDO.Instance.GetAccountList();
             cb.DisplayMember = "Type";
+            cb.DropDownStyle = ComboBoxStyle.DropDownList;
+        }
+
+        void LoadTableStatusIntoCombobox(ComboBox cb)
+        {
+            List<string> listStatus = new List<string>() { "Trống" , "Có người"};
+            cb.DataSource = listStatus;
             cb.DropDownStyle = ComboBoxStyle.DropDownList;
         }
         private void btnViewBill_Click(object sender, EventArgs e)
@@ -240,7 +281,7 @@ namespace QuanLyCafe
 
         private void textbUserName_TextChanged(object sender, EventArgs e)
         {
-            if (textbUserName.Text != "")
+            if (AccountDO.Instance.GetAccountTypeByUserName(textbUserName.Text) >= 0)
             {
                 int type = AccountDO.Instance.GetAccountTypeByUserName(textbUserName.Text);
 
@@ -258,6 +299,121 @@ namespace QuanLyCafe
                 cbAccountType.SelectedIndex = index;
             }
 
+        }
+
+        private void btnViewCaterogy_Click(object sender, EventArgs e)
+        {
+            LoadCategoryList();
+        }
+
+        private void btnAddCaterogy_Click(object sender, EventArgs e)
+        {
+            
+            string name = textbCaterogy.Text;           
+
+            if (FoodCaterogyDAO.Instance.InsertCaterogy( name))
+            {
+                LoadCategoryList();
+                MessageBox.Show("Thêm danh mục thành công");
+                if (inserCaterogy != null)
+                {
+                    inserCaterogy(this, new EventArgs());
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Có lỗi sảy ra khi thêm danh mục ăn");
+            }
+        }
+
+        private void btnEditCaterogy_Click(object sender, EventArgs e)
+        {
+            string name = textbCaterogy.Text;
+            int id = Convert.ToInt32(textbIDCaterogy.Text);
+
+            if (FoodCaterogyDAO.Instance.UpdateCaterogy(name , id))
+            {
+                LoadCategoryList();
+                if (updateCaterogy != null)
+                {
+                    updateCaterogy(this, new EventArgs());
+                }
+                MessageBox.Show("Sửa danh mục thành công");
+
+            }
+            else
+            {
+                MessageBox.Show("Có lỗi sảy ra khi sửa danh mục ăn");
+            }
+        }
+
+        private void btnDeleteCaterogy_Click(object sender, EventArgs e)
+        {
+            int id = Convert.ToInt32(textbIDCaterogy.Text);
+
+            if (FoodCaterogyDAO.Instance.DeleteFoodCaterogy(id))
+            {
+                LoadCategoryList();
+                if (deleteCaterogy != null)
+                {
+                    deleteCaterogy(this, new EventArgs());
+                }
+                MessageBox.Show("Xóa danh mục thành công");
+
+            }
+            else
+            {
+                MessageBox.Show("Có lỗi sảy ra khi xóa danh mục ăn");
+            }
+        }
+
+        private event EventHandler inserCaterogy;
+        public event EventHandler InsertCaterogy
+        {
+            add { inserCaterogy += value; }
+            remove { inserCaterogy -= value; }
+        }
+
+        private event EventHandler updateCaterogy;
+        public event EventHandler UpdateCaterogy
+        {
+            add { updateCaterogy += value; }
+            remove { updateCaterogy -= value; }
+        }
+
+        private event EventHandler deleteCaterogy;
+        public event EventHandler DeleteCaterogy
+        {
+            add { deleteCaterogy += value; }
+            remove { deleteCaterogy -= value; }
+        }
+
+        private void textbIDFoodTable_TextChanged(object sender, EventArgs e)
+        {
+            int id = Convert.ToInt32(textbIDFoodTable.Text);
+            if (TableDAO.Instance.GetTableStatusByID(id) != "")
+            {
+                string status = TableDAO.Instance.GetTableStatusByID(id);
+                
+                int index = -1;
+                int i = 0;
+                foreach (string item in cbFoodTable.Items)
+                {              
+                    if (item == status)
+                    {
+                        index = i;
+                        break;
+                    }
+                    i++;
+                }
+                cbFoodTable.SelectedIndex = index;
+            }
+        }
+
+        private void btnViewFoodTable_Click(object sender, EventArgs e)
+        {
+            LoadTableList();
         }
     }
 }

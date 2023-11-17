@@ -62,7 +62,7 @@ namespace QuanLyCafe.DAO
         {
             string query = "SELECT Type FROM dbo.Account WHERE userName = N'" + userName + "'";
             DataTable data = DataProvider.Instance.ExecuteQuery(query);
-            int type = 0;
+            int type = -1;
             foreach (DataRow item in data.Rows)
             {
                 type = (int)item["Type"];

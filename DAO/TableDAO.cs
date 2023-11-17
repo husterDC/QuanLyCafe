@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace QuanLyCafe.DAO
 {
@@ -38,7 +39,18 @@ namespace QuanLyCafe.DAO
             return tablelist;
         }
 
-        
-        
+        public string GetTableStatusByID(int id)
+        {
+            string query = "SELECT status FROM dbo.TableFood WHERE id = " + id;
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+            string status = "";
+            foreach (DataRow item in data.Rows)
+            {
+                status = item["status"].ToString();
+
+            }
+            return status;
+        }
+
     }
 }
