@@ -45,6 +45,18 @@ namespace QuanLyCafe.DAO
             return null;
         }
 
+        public int GetIdByUserName(string userName)
+        {
+            string query = "SELECT * FROM dbo.Account WHERE userName = '" + userName + "'";
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+            int id = -1;
+            foreach (DataRow item in data.Rows)
+            {
+                return (int)item["id"];
+            }
+            return id;
+        }
+
         public List<Account> GetAccountList()
         {
             string query = "SELECT * FROM dbo.Account";
@@ -52,10 +64,17 @@ namespace QuanLyCafe.DAO
             List<Account> accountList = new List<Account>();
             foreach (DataRow item in data.Rows)
             {
-
                 accountList.Add(new Account(item));
             }
             return accountList;
+        }
+
+        public DataTable LoadAccountList()
+        {
+            string query = "SELECT userName, displayName, Type FROM dbo.Account";
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+            return data;
+            
         }
 
         public int GetAccountTypeByUserName(string userName)
@@ -69,6 +88,27 @@ namespace QuanLyCafe.DAO
             
             }
             return type;
+        }
+
+        public bool InsertAccount(string userName, string displayName, int type)
+        {
+            string query = string.Format("INSERT dbo.Account (userName, displayName, Type) VALUES (N'{0}' , N'{1}' , {2})", userName, displayName , type);
+            int result = DataProvider.Instance.ExecuteNonQuery(query);
+            return result > 0;
+        }
+
+        public bool UpdateAccount(string userName, string displayName, int type, int id)
+        {
+            string query = string.Format("UPDATE dbo.Account SET userName = N'{0}' , displayName = N'{1}' , Type = {2} WHERE id = {3}", userName, displayName, type, id);
+            int result = DataProvider.Instance.ExecuteNonQuery(query);
+            return result > 0;
+        }
+
+        public bool DeleteAccount(string userName)
+        {
+            string query = string.Format("DELETE dbo.Account WHERE userName = N'{0}'", userName);
+            int result = DataProvider.Instance.ExecuteNonQuery(query);
+            return result > 0;
         }
     }
 }

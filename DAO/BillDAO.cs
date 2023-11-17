@@ -61,5 +61,11 @@ namespace QuanLyCafe.DAO
             string query = "UPDATE dbo.Bill SET dateCheckOut = GETDATE(), status = 1, " + "discount = " + discount + ", totalPrice = " + totalPrice + " WHERE id = " + id;
             DataProvider.Instance.ExecuteNonQuery(query);
         }
+
+        public void DeleteBillByTableId(int idTable)
+        {
+            string query = string.Format("DELETE dbo.Bill WHERE idTable = {0}", idTable);
+            DataProvider.Instance.ExecuteNonQuery(query);
+        }
     }
 }

@@ -20,9 +20,18 @@ namespace QuanLyCafe
         BindingSource accountList = new BindingSource();
         BindingSource categoryList = new BindingSource();
         BindingSource tableList = new BindingSource();
-        public fAdmin()
+
+        private Account logInAccount;
+
+        public Account LogInAccount
+        {
+            get { return logInAccount; }
+            set { logInAccount = value; }
+        }
+        public fAdmin(Account acc)
         {
             InitializeComponent();
+            this.logInAccount = acc;
             Load();
             LoadAccountList();
             LoadDateTimePickerBill();
@@ -68,7 +77,7 @@ namespace QuanLyCafe
         }
         void LoadAccountList()
         {
-            accountList.DataSource = AccountDO.Instance.GetAccountList();
+            accountList.DataSource = AccountDO.Instance.LoadAccountList();
             
         }
 
@@ -139,8 +148,8 @@ namespace QuanLyCafe
 
         void LoadAccountTypeIntoCombobox(ComboBox cb)
         {
-            cb.DataSource = AccountDO.Instance.GetAccountList();
-            cb.DisplayMember = "Type";
+            List<int> listType = new List<int>() { 0, 1 } ;
+            cb.DataSource = listType;
             cb.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
@@ -284,12 +293,11 @@ namespace QuanLyCafe
             if (AccountDO.Instance.GetAccountTypeByUserName(textbUserName.Text) >= 0)
             {
                 int type = AccountDO.Instance.GetAccountTypeByUserName(textbUserName.Text);
-
                 int index = -1;
                 int i = 0;
-                foreach (Account item in cbAccountType.Items)
+                foreach (int item in cbAccountType.Items)
                 {
-                    if (item.Type == type)
+                    if (item == type)
                     {
                         index = i;
                         break;
@@ -415,5 +423,186 @@ namespace QuanLyCafe
         {
             LoadTableList();
         }
+
+        private void btnAddFoodTable_Click(object sender, EventArgs e)
+        {
+            string name = textbFoodTable.Text;
+            if (TableDAO.Instance.InsertTable(name))
+            {
+                LoadTableList();
+                if (insertTable != null)
+                {
+                    insertTable(this, new EventArgs());
+                }
+                MessageBox.Show("Thêm bàn thành công");
+            }
+            else
+            {
+                MessageBox.Show("Có lỗi sảy ra khi thêm bàn");
+            }
+        }
+
+        private void btnEditFoodTable_Click(object sender, EventArgs e)
+        {
+            string name = textbFoodTable.Text;
+            int id = Convert.ToInt32(textbIDFoodTable.Text);
+            if (TableDAO.Instance.UpdateTable(name, id))
+            {
+                LoadTableList();
+                if (updateTable != null)
+                {
+                    updateTable(this, new EventArgs());
+                }
+                MessageBox.Show("Sửa thông tin bàn thành công");
+            }
+            else
+            {
+                MessageBox.Show("Có lỗi sảy ra khi sửa thông tin bàn");
+            }
+        }
+
+        private void btnDeleteFoodTable_Click(object sender, EventArgs e)
+        {
+            int id = Convert.ToInt32(textbIDFoodTable.Text);
+            int idBill = BillDAO.Instance.GetUncheckBillIDByTableID(id);
+            if (idBill >= 0) 
+            {
+                BillInforDAO.Instance.DeleteBillInfoByBillId(idBill);
+            }           
+            BillDAO.Instance.DeleteBillByTableId(id);
+            if (TableDAO.Instance.DeleteFoodTable(id))
+            {
+                LoadTableList();
+                if (deleteTable != null)
+                {
+                    deleteTable(this, new EventArgs());
+                }
+                MessageBox.Show("Xóa bàn thành công");
+
+            }
+            else
+            {
+                MessageBox.Show("Có lỗi sảy ra khi xóa bàn");
+            }
+        }
+
+        private event EventHandler insertTable;
+        public event EventHandler InsertTable
+        {
+            add { insertTable += value; }
+            remove { insertTable -= value; }
+        }
+
+        private event EventHandler updateTable;
+        public event EventHandler UpdateTable
+        {
+            add { updateTable += value; }
+            remove { updateTable -= value; }
+        }
+
+        private event EventHandler deleteTable;
+        public event EventHandler DeleteTable
+        {
+            add { deleteTable += value; }
+            remove { deleteTable -= value; }
+        }
+
+        private void btnAddAccount_Click(object sender, EventArgs e)
+        {
+            string userName = textbUserName.Text;
+            string displayName = textbDisplayName.Text;
+            int type = (int)(cbAccountType.SelectedItem);
+            
+            if (AccountDO.Instance.InsertAccount(userName, displayName, type))
+            {
+                LoadAccountList();
+                
+                MessageBox.Show("Thêm tài khoản thành công");
+            } else
+            {
+                MessageBox.Show("Có lỗi xảy ra khi thêm tài khoản");
+            }
+            
+        }
+
+        private void btnEditAccount_Click(object sender, EventArgs e)
+        {
+            string userName = textbUserName.Text;
+            string displayName = textbDisplayName.Text;
+            bool isThisAccountUpdate = false;
+            if (userName == logInAccount.UserName)
+            {
+                isThisAccountUpdate = true;
+            }
+            int type = (int)(cbAccountType.SelectedItem);
+
+            int id = AccountDO.Instance.GetIdByUserName(userName);
+
+            if (id > 0)
+            {
+                if (AccountDO.Instance.UpdateAccount(userName, displayName, type, id))
+                {
+                    LoadAccountList();
+                    if (updateAccount != null && isThisAccountUpdate)
+                    {
+                        updateAccount(this, new AccountEvent(AccountDO.Instance.GetAccountByUserName(userName)));
+                    }
+                    MessageBox.Show("Sửa tài khoản thành công");
+                }
+                else
+                {
+                    MessageBox.Show("Có lỗi xảy ra khi sửa tài khoản");
+                }
+            } else
+            {
+                MessageBox.Show("Hãy nhập chính xác tài khoản muốn sửa");
+                return;
+            }
+
+            
+        }
+
+        private void btnDeleteAccount_Click(object sender, EventArgs e)
+        {
+            string userName = textbUserName.Text;            
+            if (userName != logInAccount.UserName)
+            {
+                if (AccountDO.Instance.DeleteAccount(userName))
+                {
+                    LoadAccountList();
+                    
+                    MessageBox.Show("Xóa tài khoản thành công");
+                }
+                else
+                {
+                    MessageBox.Show("Có lỗi xảy ra khi xóa tài khoản");
+                }
+            } else
+            {
+                MessageBox.Show("Bạn không thể tự xóa tài khoản của mình");
+            }
+        }
+
+        private event EventHandler<AccountEvent> updateAccount;
+        public event EventHandler<AccountEvent> UpdateAccount
+        {
+            add { updateAccount += value; }
+            remove { updateAccount -= value; }
+        }
+
+        public class AccountEvent : EventArgs
+        {
+            private Account acc;
+
+
+
+            public AccountEvent(Account acc)
+            {
+                this.Acc = acc;
+            }
+
+            public Account Acc { get => acc; set => acc = value; }
+        }
+
     }
 }

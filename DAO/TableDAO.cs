@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace QuanLyCafe.DAO
@@ -50,6 +51,33 @@ namespace QuanLyCafe.DAO
 
             }
             return status;
+        }
+
+        public bool InsertTable(string name)
+        {
+            string query = string.Format("INSERT dbo.TableFood (name) VALUES (N'{0}')", name);
+            int result = DataProvider.Instance.ExecuteNonQuery(query);
+            return result > 0;
+        }
+
+        public bool UpdateTable(string name, int id)
+        {
+            string query = string.Format("UPDATE dbo.TableFood SET name = N'{0}'  WHERE id = {1}", name, id);
+            int result = DataProvider.Instance.ExecuteNonQuery(query);
+            return result > 0;
+        }
+
+        public bool DeleteFoodTable(int id)
+        {
+            string query = string.Format("DELETE dbo.TableFood WHERE id = {0}", id);
+            int result = DataProvider.Instance.ExecuteNonQuery(query);
+            return result > 0;
+        }
+
+        public void UpdateStatusTable (int id, string status)
+        {
+            string query = string.Format("UPDATE dbo.TableFood SET status = N'{0}'  WHERE id = {1}", status, id);
+            DataProvider.Instance.ExecuteNonQuery(query);
         }
 
     }

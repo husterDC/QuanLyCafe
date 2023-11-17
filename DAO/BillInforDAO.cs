@@ -44,5 +44,11 @@ namespace QuanLyCafe.DAO
             string query = string.Format("DELETE dbo.BillInfo WHERE idFood = {0}", idFood);
             DataProvider.Instance.ExecuteNonQuery(query);
         }
+
+        public void DeleteBillInfoByBillId(int idBill)
+        {
+            string query = string.Format("DELETE dbo.BillInfo WHERE idBill = {0}", idBill);
+            DataProvider.Instance.ExecuteNonQuery(query);
+        }
     }
 }

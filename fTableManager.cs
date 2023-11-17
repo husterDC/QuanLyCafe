@@ -28,7 +28,7 @@ namespace QuanLyCafe
         public fTableManager(Account acc)
         {
             InitializeComponent();
-            this.logInAccount = acc;
+            this.logInAccount = acc;            
             ChangeAccount(logInAccount.Type);
             LoadTable();
             LoadCaterogy();
@@ -40,7 +40,7 @@ namespace QuanLyCafe
         void ChangeAccount(int type)
         {
             adminToolStripMenuItem.Enabled = type == 1;
-            thôngTinTàiKhoảnToolStripMenuItem.Text += " (" + logInAccount.DisplayName + ")";
+            thôngTinTàiKhoảnToolStripMenuItem.Text = "Thông tin tài khoản " + "(" + logInAccount.DisplayName + ")";
         }
         void LoadTable()
         {
@@ -49,31 +49,33 @@ namespace QuanLyCafe
             foreach (Table table in tablelist)
             {
                 Button btn = new Button() { Width = TableDAO.TableWidth, Height = TableDAO.TableHeight };
-                btn.Text = table.Name + Environment.NewLine + table.Status;
+                
                 btn.Click += Btn_Click;
                 btn.Tag = table;
                 int idTable = table.Id;
                 int idBill = BillDAO.Instance.GetUncheckBillIDByTableID(idTable);
                 List<BillInfor> billInfor = BillInforDAO.Instance.GetListBillInfor(idBill);
-
                 if(billInfor.Count <= 0)
                 {
-                    table.Status = "Trống";
+                    string status = "Trống";
+                    TableDAO.Instance.UpdateStatusTable(idTable, status);
                 }
-
-
-                switch (table.Status) {
+                string statusTable = TableDAO.Instance.GetTableStatusByID(idTable);
+                switch (statusTable) {
 
                     case "Trống":
+                        btn.Text = table.Name + Environment.NewLine + statusTable;
                         btn.BackColor = Color.Aqua;
                         break;
                     default:
+                        btn.Text = table.Name + Environment.NewLine + statusTable;
                         btn.BackColor = Color.Red;
                         break;
                 }
                 flpanelTable.Controls.Add(btn);
             }
         }
+
 
         void LoadComboxTable (ComboBox cb)
         {
@@ -147,14 +149,47 @@ namespace QuanLyCafe
 
         private void adminToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            fAdmin f = new fAdmin();
+            fAdmin f = new fAdmin(logInAccount);
             f.InsertFood += F_InsertFood;
             f.UpdateFood += F_UpdateFood;
             f.DeleteFood += F_DeleteFood;
+
             f.InsertCaterogy += F_InsertCaterogy;
             f.UpdateCaterogy += F_UpdateCaterogy;
             f.DeleteCaterogy += F_DeleteCaterogy;
+
+            f.InsertTable += F_InsertTable;
+            f.UpdateTable += F_UpdateTable;
+            f.DeleteTable += F_DeleteTable;
+
+            f.UpdateAccount += F_UpdateAccount1;          
+
             f.ShowDialog();
+        }
+
+        private void F_UpdateAccount1(object sender, fAdmin.AccountEvent e)
+        {
+            logInAccount.UserName = e.Acc.UserName;
+            logInAccount.DisplayName = e.Acc.DisplayName;
+            logInAccount.Type = e.Acc.Type;
+            ChangeAccount(logInAccount.Type);
+        }
+
+        
+
+        private void F_DeleteTable(object sender, EventArgs e)
+        {
+            LoadTable();
+        }
+
+        private void F_UpdateTable(object sender, EventArgs e)
+        {
+            LoadTable();
+        }
+
+        private void F_InsertTable(object sender, EventArgs e)
+        {
+            LoadTable();
         }
 
         private void F_DeleteCaterogy(object sender, EventArgs e)
