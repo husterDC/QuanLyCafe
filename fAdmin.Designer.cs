@@ -112,6 +112,13 @@
             this.dateTimePickerToDate = new System.Windows.Forms.DateTimePicker();
             this.dateTimePickerFromDate = new System.Windows.Forms.DateTimePicker();
             this.tcAdmin = new System.Windows.Forms.TabControl();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.textbPageBill = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textbMaxPage = new System.Windows.Forms.TextBox();
             this.tpAcconut.SuspendLayout();
             this.panel17.SuspendLayout();
             this.panel18.SuspendLayout();
@@ -189,6 +196,7 @@
             this.btnResetPass.TabIndex = 4;
             this.btnResetPass.Text = "Đặt lại mật khẩu";
             this.btnResetPass.UseVisualStyleBackColor = true;
+            this.btnResetPass.Click += new System.EventHandler(this.btnResetPass_Click);
             // 
             // panel18
             // 
@@ -961,6 +969,13 @@
             // 
             // tpBill
             // 
+            this.tpBill.Controls.Add(this.textbMaxPage);
+            this.tpBill.Controls.Add(this.label1);
+            this.tpBill.Controls.Add(this.textbPageBill);
+            this.tpBill.Controls.Add(this.button3);
+            this.tpBill.Controls.Add(this.button4);
+            this.tpBill.Controls.Add(this.button2);
+            this.tpBill.Controls.Add(this.button1);
             this.tpBill.Controls.Add(this.panel1);
             this.tpBill.Controls.Add(this.panel2);
             this.tpBill.Location = new System.Drawing.Point(4, 25);
@@ -978,7 +993,7 @@
             this.panel1.Location = new System.Drawing.Point(8, 81);
             this.panel1.Margin = new System.Windows.Forms.Padding(4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(967, 519);
+            this.panel1.Size = new System.Drawing.Size(967, 469);
             this.panel1.TabIndex = 1;
             // 
             // dataGridViewBill
@@ -989,7 +1004,7 @@
             this.dataGridViewBill.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridViewBill.Name = "dataGridViewBill";
             this.dataGridViewBill.RowHeadersWidth = 51;
-            this.dataGridViewBill.Size = new System.Drawing.Size(959, 528);
+            this.dataGridViewBill.Size = new System.Drawing.Size(959, 457);
             this.dataGridViewBill.TabIndex = 0;
             // 
             // panel2
@@ -1045,6 +1060,80 @@
             this.tcAdmin.SelectedIndex = 0;
             this.tcAdmin.Size = new System.Drawing.Size(993, 641);
             this.tcAdmin.TabIndex = 0;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(12, 567);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(100, 28);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "First";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(132, 567);
+            this.button2.Margin = new System.Windows.Forms.Padding(4);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(100, 28);
+            this.button2.TabIndex = 4;
+            this.button2.Text = "Previours";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(872, 567);
+            this.button3.Margin = new System.Windows.Forms.Padding(4);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(100, 28);
+            this.button3.TabIndex = 6;
+            this.button3.Text = "Last";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(752, 567);
+            this.button4.Margin = new System.Windows.Forms.Padding(4);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(100, 28);
+            this.button4.TabIndex = 5;
+            this.button4.Text = "Next";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // textbPageBill
+            // 
+            this.textbPageBill.Location = new System.Drawing.Point(431, 570);
+            this.textbPageBill.Name = "textbPageBill";
+            this.textbPageBill.ReadOnly = true;
+            this.textbPageBill.Size = new System.Drawing.Size(28, 22);
+            this.textbPageBill.TabIndex = 7;
+            this.textbPageBill.Text = "1";
+            this.textbPageBill.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textbPageBill.TextChanged += new System.EventHandler(this.textbPageBill_TextChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(465, 567);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(18, 25);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "|";
+            // 
+            // textbMaxPage
+            // 
+            this.textbMaxPage.Location = new System.Drawing.Point(489, 570);
+            this.textbMaxPage.Name = "textbMaxPage";
+            this.textbMaxPage.ReadOnly = true;
+            this.textbMaxPage.Size = new System.Drawing.Size(28, 22);
+            this.textbMaxPage.TabIndex = 9;
+            this.textbMaxPage.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // fAdmin
             // 
@@ -1103,6 +1192,7 @@
             this.panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewFood)).EndInit();
             this.tpBill.ResumeLayout(false);
+            this.tpBill.PerformLayout();
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewBill)).EndInit();
             this.panel2.ResumeLayout(false);
@@ -1196,5 +1286,12 @@
         private System.Windows.Forms.DataGridView dataGridViewAdmin;
         private System.Windows.Forms.TextBox textbCaterogy;
         private System.Windows.Forms.Button btnResetPass;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox textbPageBill;
+        private System.Windows.Forms.TextBox textbMaxPage;
+        private System.Windows.Forms.Label label1;
     }
 }

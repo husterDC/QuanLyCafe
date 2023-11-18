@@ -396,3 +396,35 @@ END
 CREATE FUNCTION [dbo].[fuConvertToUnsign1] ( @strInput NVARCHAR(4000) ) RETURNS NVARCHAR(4000) AS BEGIN IF @strInput IS NULL RETURN @strInput IF @strInput = '' RETURN @strInput DECLARE @RT NVARCHAR(4000) DECLARE @SIGN_CHARS NCHAR(136) DECLARE @UNSIGN_CHARS NCHAR (136) SET @SIGN_CHARS = N'ăâđêôơưàảãạáằẳẵặắầẩẫậấèẻẽẹéềểễệế ìỉĩịíòỏõọóồổỗộốờởỡợớùủũụúừửữựứỳỷỹỵý ĂÂĐÊÔƠƯÀẢÃẠÁẰẲẴẶẮẦẨẪẬẤÈẺẼẸÉỀỂỄỆẾÌỈĨỊÍ ÒỎÕỌÓỒỔỖỘỐỜỞỠỢỚÙỦŨỤÚỪỬỮỰỨỲỶỸỴÝ' +NCHAR(272)+ NCHAR(208) SET @UNSIGN_CHARS = N'aadeoouaaaaaaaaaaaaaaaeeeeeeeeee iiiiiooooooooooooooouuuuuuuuuuyyyyy AADEOOUAAAAAAAAAAAAAAAEEEEEEEEEEIIIII OOOOOOOOOOOOOOOUUUUUUUUUUYYYYYDD' DECLARE @COUNTER int DECLARE @COUNTER1 int SET @COUNTER = 1 WHILE (@COUNTER <=LEN(@strInput)) BEGIN SET @COUNTER1 = 1 WHILE (@COUNTER1 <=LEN(@SIGN_CHARS)+1) BEGIN IF UNICODE(SUBSTRING(@SIGN_CHARS, @COUNTER1,1)) = UNICODE(SUBSTRING(@strInput,@COUNTER ,1) ) BEGIN IF @COUNTER=1 SET @strInput = SUBSTRING(@UNSIGN_CHARS, @COUNTER1,1) + SUBSTRING(@strInput, @COUNTER+1,LEN(@strInput)-1) ELSE SET @strInput = SUBSTRING(@strInput, 1, @COUNTER-1) +SUBSTRING(@UNSIGN_CHARS, @COUNTER1,1) + SUBSTRING(@strInput, @COUNTER+1,LEN(@strInput)- @COUNTER) BREAK END SET @COUNTER1 = @COUNTER1 +1 END SET @COUNTER = @COUNTER +1 END SET @strInput = replace(@strInput,' ','-') RETURN @strInput END
 
 
+CREATE PROC USP_GetListBillByDateAndPage
+@checkInDate DATE, @checkOutDate DATE, @page int
+AS
+BEGIN
+	DECLARE @pageRows INT = 10
+	DECLARE @selectRows INT = @pageRows * @page
+	DECLARE @exceptRows INT = @pageRows * (@page - 1)
+
+	;WITH BillShow AS (SELECT b.id, t.name AS [Tên bàn], b.totalPrice AS [Tổng tiền], b.dateCheckIn AS [Ngày vào], b.dateCheckOut AS [Ngày ra], b.discount AS [Giảm giá (%)]
+	FROM dbo.Bill AS b, dbo.TableFood AS t
+	WHERE dateCheckIn >= @checkInDate AND dateCheckOut <= @checkOutDate AND b.status = 1 AND t.id = b.idTable)
+
+	SELECT TOP (@selectRows) * FROM BillShow
+	EXCEPT
+	SELECT TOP (@exceptRows) * FROM BillShow
+
+
+END
+GO
+
+
+
+CREATE PROC USP_GetNumBillByDate
+@checkInDate DATE, @checkOutDate DATE
+AS
+BEGIN
+	
+	SELECT COUNT(*)
+	FROM dbo.Bill AS b, dbo.TableFood AS t
+	WHERE dateCheckIn >= @checkInDate AND dateCheckOut <= @checkOutDate AND b.status = 1 AND t.id = b.idTable
+END
+GO

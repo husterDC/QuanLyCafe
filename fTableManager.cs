@@ -58,7 +58,9 @@ namespace QuanLyCafe
                 if(billInfor.Count <= 0)
                 {
                     string status = "Trống";
+                    
                     TableDAO.Instance.UpdateStatusTable(idTable, status);
+                    
                 }
                 string statusTable = TableDAO.Instance.GetTableStatusByID(idTable);
                 switch (statusTable) {
@@ -261,49 +263,65 @@ namespace QuanLyCafe
             int idBill = BillDAO.Instance.GetUncheckBillIDByTableID(table.Id);
             int FoodId = (cbFood.SelectedItem as Food).Id;
             int count = (int)nUDFood.Value;
-            
+
             if (idBill == -1)
             {
                 if (count <= 0)
                 {
                     MessageBox.Show("Không thể giảm món khi món ăn chưa có trong Bill", "Thông báo");
                     return;
-                } else
+                }
+                else
                 {
                     BillDAO.Instance.InsertBill(table.Id);
 
                     BillInforDAO.Instance.InsertBillInfo(BillDAO.Instance.GetMaxIdBill(), FoodId, count);
-                }               
+                }
             }
             else
-            {              
+            {
                 BillInforDAO.Instance.InsertBillInfo(idBill, FoodId, count);
             }
+           
 
-            ShowBill(table.Id);
+                       
             LoadTable();
         }
 
         private void btnPay_Click(object sender, EventArgs e)
         {
+
             int tableId = 1;
             Table table = listwBill.Tag as Table;
             if (table != null)
             {
                 tableId = table.Id;
             }
+            
             int idBill = BillDAO.Instance.GetUncheckBillIDByTableID(tableId);
             int discount = (int)nUDDiscount.Value;
             double totalPrice = Convert.ToDouble(textTotalPrice.Text.Split(',')[0])*1000;
+            
             double finalPrice = totalPrice - (totalPrice / 100) * discount;
-            if (idBill != -1)
+
+            List<BillInfor> billInfor = BillInforDAO.Instance.GetListBillInfor(idBill);
+            if (billInfor.Count > 0)
             {
-                if (MessageBox.Show(string.Format("Bạn có muốn thanh toán hóa đơn cho {0} \nTổng tiền - (Tổng tiền/100)x Giảm giá : \n{1} -{1}/100*{2} = {3}", table.Name, totalPrice, discount, finalPrice), "Thông báo", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                if (idBill > -1)
                 {
-                    BillDAO.Instance.CheckOut(idBill, discount, (float)finalPrice);
-                    ShowBill(table.Id);
+                    if (MessageBox.Show(string.Format("Bạn có muốn thanh toán hóa đơn cho {0} \nTổng tiền - (Tổng tiền/100)x Giảm giá : \n{1} -{1}/100*{2} = {3}", table.Name, totalPrice, discount, finalPrice), "Thông báo", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                    {
+                        BillDAO.Instance.CheckOut(idBill, discount, (float)finalPrice);
+                        ShowBill(table.Id);
+                    }
                 }
+
+            } else
+            {
+                BillDAO.Instance.DeleteUncheckBillByTableId(tableId);
             }
+            
+            
             LoadTable();
         }
 
@@ -327,6 +345,16 @@ namespace QuanLyCafe
         private void đăngXuẩtToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void thanhToánToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnPay_Click(this, new EventArgs());
+        }
+
+        private void thêmMónToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnAddFood_Click(this, new EventArgs());
         }
     }
 }

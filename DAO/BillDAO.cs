@@ -44,6 +44,16 @@ namespace QuanLyCafe.DAO
             return DataProvider.Instance.ExecuteQuery("EXEC USP_GetListBillByDate @checkInDate , @checkOutDate", new object[] { checkIn, checkOut });
         }
 
+        public DataTable GetListBillByDateAndPage(DateTime checkIn, DateTime checkOut, int page)
+        {
+            return DataProvider.Instance.ExecuteQuery("EXEC USP_GetListBillByDateAndPage @checkInDate , @checkOutDate , @page", new object[] { checkIn, checkOut, page });
+        }
+
+
+        public int GetNumBillByDate(DateTime checkIn, DateTime checkOut)
+        {
+            return (int)DataProvider.Instance.ExecuteScalar("EXEC USP_GetNumBillByDate @checkInDate , @checkOutDate", new object[] { checkIn, checkOut });
+        }
         public int GetMaxIdBill()
         {
             try
@@ -65,6 +75,12 @@ namespace QuanLyCafe.DAO
         public void DeleteBillByTableId(int idTable)
         {
             string query = string.Format("DELETE dbo.Bill WHERE idTable = {0}", idTable);
+            DataProvider.Instance.ExecuteNonQuery(query);
+        }
+
+        public void DeleteUncheckBillByTableId(int idTable)
+        {
+            string query = string.Format("DELETE dbo.Bill WHERE idTable = {0} AND status = 0", idTable);
             DataProvider.Instance.ExecuteNonQuery(query);
         }
     }

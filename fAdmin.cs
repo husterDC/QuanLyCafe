@@ -103,7 +103,17 @@ namespace QuanLyCafe
 
         void LoadListBillByDate (DateTime checkIn, DateTime checkOut) 
         {
-            dataGridViewBill.DataSource = BillDAO.Instance.GetListBillByDate(checkIn, checkOut);
+            dataGridViewBill.DataSource = BillDAO.Instance.GetListBillByDateAndPage(checkIn, checkOut, 1);
+            int numBill = BillDAO.Instance.GetNumBillByDate(dateTimePickerFromDate.Value, dateTimePickerToDate.Value);
+
+            int lastPage = numBill / 10;
+
+            if (numBill % 10 != 0)
+            {
+                lastPage = lastPage + 1;
+            }
+
+            textbMaxPage.Text = lastPage.ToString();
         }
 
 
@@ -583,6 +593,28 @@ namespace QuanLyCafe
             }
         }
 
+        private void btnResetPass_Click(object sender, EventArgs e)
+        {
+            string userName = textbUserName.Text;
+            if (userName != logInAccount.UserName)
+            {
+                if (AccountDO.Instance.ResetPass(userName))
+                {
+                    LoadAccountList();
+
+                    MessageBox.Show("Reset password tài khoản thành công");
+                }
+                else
+                {
+                    MessageBox.Show("Có lỗi xảy ra khi reset password tài khoản");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Bạn không thể tự reset password khoản của mình");
+            }
+        }
+
         private event EventHandler<AccountEvent> updateAccount;
         public event EventHandler<AccountEvent> UpdateAccount
         {
@@ -604,5 +636,75 @@ namespace QuanLyCafe
             public Account Acc { get => acc; set => acc = value; }
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            textbPageBill.Text = "1";
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            int numBill = BillDAO.Instance.GetNumBillByDate(dateTimePickerFromDate.Value, dateTimePickerToDate.Value);
+
+            int lastPage = numBill/10;
+
+            if (numBill % 10 != 0)
+            {
+                lastPage = lastPage + 1;
+            }
+
+            textbPageBill.Text = lastPage.ToString();
+        }
+
+        private void textbPageBill_TextChanged(object sender, EventArgs e)
+        {
+            int page = Convert.ToInt32(textbPageBill.Text);
+            dataGridViewBill.DataSource = BillDAO.Instance.GetListBillByDateAndPage(dateTimePickerFromDate.Value, dateTimePickerToDate.Value, page);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            int numBill = BillDAO.Instance.GetNumBillByDate(dateTimePickerFromDate.Value, dateTimePickerToDate.Value);
+
+            int lastPage = numBill / 10;
+
+            if (numBill % 10 != 0)
+            {
+                lastPage = lastPage + 1;
+            }
+            int thisPage = Convert.ToInt32(textbPageBill.Text);
+            if (thisPage < lastPage)
+            {
+                thisPage++;
+            }
+            else
+            {
+                thisPage = 1;
+            }
+            textbPageBill.Text = thisPage.ToString();
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            int numBill = BillDAO.Instance.GetNumBillByDate(dateTimePickerFromDate.Value, dateTimePickerToDate.Value);
+
+            int lastPage = numBill / 10;
+
+            if (numBill % 10 != 0)
+            {
+                lastPage = lastPage + 1;
+            }
+            int thisPage = Convert.ToInt32(textbPageBill.Text);
+            if (thisPage > 1 && thisPage <= lastPage)
+            {
+                thisPage--;
+            }
+            else
+            {
+                thisPage = lastPage;
+            }
+            textbPageBill.Text = thisPage.ToString();
+
+        }
     }
 }
