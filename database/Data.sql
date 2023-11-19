@@ -1,7 +1,7 @@
-﻿CREATE DATABASE QuanLyQuanCafe
+﻿CREATE DATABASE QuanLyQuan
 GO
 
-USE QuanLyQuanCafe
+USE QuanLyQuan
 GO
 
 -- Food
@@ -21,16 +21,14 @@ CREATE TABLE TableFood
 GO
 
 CREATE TABLE Account
-(	
+(
+	id INT IDENTITY,
 	displayName NVARCHAR(100) NOT NULL,
 	userName NVARCHAR(100) PRIMARY KEY,
 	passWord NVARCHAR(100) NOT NULL DEFAULT 0,
 	Type INT NOT NULL DEFAULT 0 -- 1: admin, 0: staff
 )
 GO
-
-ALTER TABLE dbo.Account
-ADD id INT IDENTITY
 
 
 CREATE TABLE FoodCategory
@@ -49,7 +47,6 @@ CREATE TABLE Food
 	name NVARCHAR(100) NOT NULL DEFAULT N'Chưa đặt tên',
 	idCategory INT NOT NULL,
 	price FLOAT NOT NULL DEFAULT 0,
-
 	FOREIGN KEY (idCategory) REFERENCES dbo.FoodCategory(id)
 )
 GO
@@ -61,7 +58,8 @@ CREATE TABLE Bill
 	dateCheckOut DATE,
 	idTable INT NOT NULL,
 	status INT NOT NULL DEFAULT 0, -- 1 đã thanh toán, 0: chưa thánh toán
-
+	totalPrice FLOAT,
+	discount INT DEFAULT 0,
 	FOREIGN KEY (idTable) REFERENCES dbo.TableFood(id)
 )
 GO
@@ -78,31 +76,13 @@ CREATE TABLE BillInfo
 )
 GO
 
-INSERT INTO dbo.Account
-        ( UserName ,
-          DisplayName ,
-          PassWord ,
-          Type
-        )
-VALUES  ( N'K9' , -- UserName - nvarchar(100)
-          N'RongK9' , -- DisplayName - nvarchar(100)
-          N'1' , -- PassWord - nvarchar(1000)
-          1  -- Type - int
-        )
-INSERT INTO dbo.Account
-        ( UserName ,
-          DisplayName ,
-          PassWord ,
-          Type
-        )
-VALUES  ( N'staff' , -- UserName - nvarchar(100)
-          N'staff' , -- DisplayName - nvarchar(100)
-          N'1' , -- PassWord - nvarchar(1000)
-          0  -- Type - int
-        )
+
+--Thêm tài khoản admin mặc định
+INSERT dbo.Account (userName, displayName, Type , passWord)
+VALUES (N'admin' , N'Admin' , 1, N'1962026656160185351301320480154111117132155')
 GO
 
-
+--Tạo Stored Procedure Lấy ListAccount qua userName
 CREATE proc USP_GetListAccountByUserName
 @userName NVARCHAR(100)
 AS
@@ -111,9 +91,7 @@ BEGIN
 END
 GO
 
-EXEC dbo.USP_GetListAccountByUserName @userName = N'K9'
-GO
-
+-- Tạo Stored Procedure kiểm tra đăng nhập
 CREATE PROC USP_Login
 @userName NVARCHAR(100), @passWord NVARCHAR(100)
 AS
@@ -122,17 +100,16 @@ BEGIN
 END
 GO
 
-EXEC dbo.USP_Login @userName = N'K9', @passWord = N'1'
 
---Thêm bàn
-
-DECLARE @i INT = 0
+--Thêm bàn từ 1- 10
+DECLARE @i INT = 1
 
 WHILE @i <= 10
 BEGIN
 	INSERT dbo.TableFood (name) VALUES (N'Bàn ' + CAST(@i AS NVARCHAR(100)))
 	SET @i= @i + 1
 END
+GO
 -- Thêm caterogy
 INSERT dbo.FoodCategory (name)
 VALUES (N'Hải sản')
@@ -173,53 +150,18 @@ INSERT dbo.Food (name, idCategory, price)
 VALUES (N'Pessi', 5, 10000)
 
 GO
-SELECT * FROM dbo.TableFood
+
 
 --Thêm Bill
-INSERT dbo.Bill (dateCheckIn,dateCheckOut, idTable, status)
-VALUES (GETDATE(), NULL, 1, 0)
-
-INSERT dbo.Bill (dateCheckIn,dateCheckOut, idTable, status)
-VALUES (GETDATE(), NULL, 2, 0)
-
-INSERT dbo.Bill (dateCheckIn,dateCheckOut, idTable, status)
-VALUES (GETDATE(), GETDATE(), 3, 1)
-
-INSERT dbo.Bill (dateCheckIn,dateCheckOut, idTable, status)
-VALUES (GETDATE(), Null, 6, 0)
 
 --Thêm BilInfor
-INSERT dbo.BillInfo (idBill, idFood, count)
-VALUES (1, 1, 2)
 
-INSERT dbo.BillInfo (idBill, idFood, count)
-VALUES (2, 1, 2)
-
-INSERT dbo.BillInfo (idBill, idFood, count)
-VALUES (2, 5, 2)
-
-INSERT dbo.BillInfo (idBill, idFood, count)
-VALUES (3, 4, 1)
-
-INSERT dbo.BillInfo (idBill, idFood, count)
-VALUES (4, 6, 2)
-
-INSERT dbo.BillInfo (idBill, idFood, count)
-VALUES (4, 4, 1)
-
-SELECT * FROM dbo.TableFood
-SELECT * FROM dbo.Bill
-SELECT * FROM dbo.BillInfo
-SELECT * FROM dbo.Food
-SELECT * FROM dbo.FoodCategory
-
-SELECT f.name, bi.count, f.price, f.price*bi.count AS totalPrice FROM dbo.BillInfo AS bi, dbo.Bill AS b, dbo.Food AS f WHERE bi.idBill = b.id AND bi.idFood = f.id AND b.idTable = 3
-UPDATE dbo.TableFood SET status = N'Có người' WHERE id = 8
-
+--Tạo Stored Procedure lấy ra danh sách bàn ăn đang có
 CREATE PROC USP_GetTableList
 AS SELECT * FROM dbo.TableFood
 GO
 
+--Tạo Stored Procedure thêm Bill vào bàn hiện tại
 CREATE PROC USP_INSERTBill
 @idTable INT
 AS
@@ -229,16 +171,10 @@ BEGIN
 END
 GO
 
-CREATE PROC USP_INSERTBillInfo
-@idBill INT, @idFood INT, @count INT
-AS
-BEGIN
-	INSERT dbo.BillInfo ( idBill, idFood, count)
-	VALUES (@idBill, @idFood, @count)
-END
-GO
 
-ALTER PROC USP_INSERTBillInfo
+--Tạo Stored Procedure thêm BillInfo vào Bill hiện tại
+
+CREATE PROC USP_INSERTBillInfo
 @idBill INT, @idFood INT, @count INT
 AS
 BEGIN
@@ -261,13 +197,8 @@ BEGIN
 END
 GO
 
-DELETE dbo.BillInfo
-DELETE dbo.Bill
-
-
-
-
-ALTER TRIGGER UTG_UpdateBillInfo
+--Tạo Trigger Khi update dữ liệu BillInfo
+CREATE TRIGGER UTG_UpdateBillInfo
 ON dbo.BillInfo FOR INSERT, UPDATE
 AS
 BEGIN
@@ -288,7 +219,7 @@ BEGIN
 END
 GO
 
-
+--Tạo Trigger Khi update dữ liệu Bill
 CREATE TRIGGER UTG_UpdateBill
 ON dbo.Bill FOR UPDATE
 AS
@@ -306,15 +237,7 @@ BEGIN
 END
 GO 
 
-
-
-ALTER TABLE dbo.Bill
-ADD discount INT
-
-UPDATE dbo.Bill SET discount = 0
-
-
-
+--Tạo Stored Procedure để chuyển đổi hai bàn (Chuyển đổi Bill và BillInfo)
 
 CREATE PROC USP_SwitchTable
 @idTable1 INT , @idTable2 INT
@@ -360,7 +283,7 @@ BEGIN
 END
 GO
 
-ALTER TABLE dbo.Bill ADD totalPrice FLOAT
+--Tạo Stored Procedure lấy danh sách Bill theo ngày
 
 CREATE PROC USP_GetListBillByDate
 @checkInDate DATE, @checkOutDate DATE
@@ -372,6 +295,8 @@ BEGIN
 	WHERE dateCheckIn >= @checkInDate AND dateCheckOut <= @checkOutDate AND b.status = 1 AND t.id = b.idTable
 END
 GO
+
+----Tạo Stored Procedure thay đổi thông tin tài khoản
 
 CREATE PROC USP_UpdateAccount
 @userName NVARCHAR(100), @displayName NVARCHAR(100), @passWord NVARCHAR(100), @newPassWord NVARCHAR(100)
@@ -391,10 +316,12 @@ BEGIN
 			UPDATE dbo.Account SET displayName = @displayName, passWord = @newPassWord WHERE userName = @userName
 	END
 END
+GO
 
-
+--Tạo hàm chuyển đổi chuỗi có dấu sang chuỗi không dấu phục vụ cho việc tìm kiếm chính xác
 CREATE FUNCTION [dbo].[fuConvertToUnsign1] ( @strInput NVARCHAR(4000) ) RETURNS NVARCHAR(4000) AS BEGIN IF @strInput IS NULL RETURN @strInput IF @strInput = '' RETURN @strInput DECLARE @RT NVARCHAR(4000) DECLARE @SIGN_CHARS NCHAR(136) DECLARE @UNSIGN_CHARS NCHAR (136) SET @SIGN_CHARS = N'ăâđêôơưàảãạáằẳẵặắầẩẫậấèẻẽẹéềểễệế ìỉĩịíòỏõọóồổỗộốờởỡợớùủũụúừửữựứỳỷỹỵý ĂÂĐÊÔƠƯÀẢÃẠÁẰẲẴẶẮẦẨẪẬẤÈẺẼẸÉỀỂỄỆẾÌỈĨỊÍ ÒỎÕỌÓỒỔỖỘỐỜỞỠỢỚÙỦŨỤÚỪỬỮỰỨỲỶỸỴÝ' +NCHAR(272)+ NCHAR(208) SET @UNSIGN_CHARS = N'aadeoouaaaaaaaaaaaaaaaeeeeeeeeee iiiiiooooooooooooooouuuuuuuuuuyyyyy AADEOOUAAAAAAAAAAAAAAAEEEEEEEEEEIIIII OOOOOOOOOOOOOOOUUUUUUUUUUYYYYYDD' DECLARE @COUNTER int DECLARE @COUNTER1 int SET @COUNTER = 1 WHILE (@COUNTER <=LEN(@strInput)) BEGIN SET @COUNTER1 = 1 WHILE (@COUNTER1 <=LEN(@SIGN_CHARS)+1) BEGIN IF UNICODE(SUBSTRING(@SIGN_CHARS, @COUNTER1,1)) = UNICODE(SUBSTRING(@strInput,@COUNTER ,1) ) BEGIN IF @COUNTER=1 SET @strInput = SUBSTRING(@UNSIGN_CHARS, @COUNTER1,1) + SUBSTRING(@strInput, @COUNTER+1,LEN(@strInput)-1) ELSE SET @strInput = SUBSTRING(@strInput, 1, @COUNTER-1) +SUBSTRING(@UNSIGN_CHARS, @COUNTER1,1) + SUBSTRING(@strInput, @COUNTER+1,LEN(@strInput)- @COUNTER) BREAK END SET @COUNTER1 = @COUNTER1 +1 END SET @COUNTER = @COUNTER +1 END SET @strInput = replace(@strInput,' ','-') RETURN @strInput END
-
+GO
+--Tạo Stored Procedure lấy Bill theo ngày và theo số trang
 
 CREATE PROC USP_GetListBillByDateAndPage
 @checkInDate DATE, @checkOutDate DATE, @page int
@@ -416,7 +343,7 @@ BEGIN
 END
 GO
 
-
+--Tạo Stored Procedure lấy  tổng số Bill theo ngày
 
 CREATE PROC USP_GetNumBillByDate
 @checkInDate DATE, @checkOutDate DATE

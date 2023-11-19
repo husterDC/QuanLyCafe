@@ -300,16 +300,20 @@ namespace QuanLyCafe
             
             int idBill = BillDAO.Instance.GetUncheckBillIDByTableID(tableId);
             int discount = (int)nUDDiscount.Value;
-            double totalPrice = Convert.ToDouble(textTotalPrice.Text.Split(',')[0])*1000;
+
+            double totalPrice = Convert.ToDouble(textTotalPrice.Text.Split(',')[0].Replace(".", ""));
+            //double totalPrice = Convert.ToDouble(textTotalPrice.Text.Split(',')[0])*1000;
             
             double finalPrice = totalPrice - (totalPrice / 100) * discount;
-
+            CultureInfo culture = new CultureInfo("vi-VN");
+            //Thread.CurrentThread.CurrentCulture = culture;
+            string textFinalPrice = finalPrice.ToString("c", culture);
             List<BillInfor> billInfor = BillInforDAO.Instance.GetListBillInfor(idBill);
             if (billInfor.Count > 0)
             {
                 if (idBill > -1)
                 {
-                    if (MessageBox.Show(string.Format("Bạn có muốn thanh toán hóa đơn cho {0} \nTổng tiền - (Tổng tiền/100)x Giảm giá : \n{1} -{1}/100*{2} = {3}", table.Name, totalPrice, discount, finalPrice), "Thông báo", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                    if (MessageBox.Show(string.Format("Bạn có muốn thanh toán hóa đơn cho {0} \nTổng tiền - (Tổng tiền/100)x Giảm giá : \n{1} -{1}/100*{2} = {3}", table.Name, totalPrice, discount, textFinalPrice), "Thông báo", MessageBoxButtons.OKCancel) == DialogResult.OK)
                     {
                         BillDAO.Instance.CheckOut(idBill, discount, (float)finalPrice);
                         ShowBill(table.Id);
